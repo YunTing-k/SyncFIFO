@@ -23,8 +23,8 @@
 //-FHDR//////////////////////////////////////////////////////////////////////////////
 `timescale 1ns / 1ps
 `define FIFO_BASE_ADDR    32'h2000_0000              // base addr of FIFO device
-`define FIFO_WRITE_DATA   (32'h2000_0000 + 32'h00)   // FIFO write data (read/write)
-`define FIFO_STATUS       (32'h2000_0000 + 32'h04)   // FIFO status (read)
+`define FIFO_WRITE_DATA   (`FIFO_BASE_ADDR + 32'h00)   // FIFO write data (read/write)
+`define FIFO_STATUS       (`FIFO_BASE_ADDR + 32'h04)   // FIFO status (read)
 
 module apb_slave
 (
