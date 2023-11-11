@@ -207,6 +207,19 @@ always @(posedge clk or negedge rst_n) begin
             endcase
             output_done <= 1'b1;
         end
+        default:
+        begin
+            // output reg reset
+            rd_en <= 1'b0;
+            rd_only <= 1'b0;
+            ready <= 1'b0;
+            // inner reg reset
+            cfg_done <= 1'b0;
+            ctrl_done <= 1'b0;
+            wait_done <= 1'b0;
+            output_done <= 1'b0;
+            wait_counter <= 3'd0;
+        end
         endcase
     end
 end
