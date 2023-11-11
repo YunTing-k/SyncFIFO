@@ -88,6 +88,9 @@ always @(posedge clk or negedge rst_n) begin
         fifo_counter <= fifo_counter;
     end
 end
+// write and read clock
+assign wr_clk = clk;
+assign rd_clk = clk;
 
 // combinational logic of flag signals
 assign fifo_pop = (rd_en && (!rd_only)) ? 1'b1:1'b0;

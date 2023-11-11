@@ -8,7 +8,8 @@
 // Target Device: N/A
 // Tool versions: QuestaSim 10.6c
 // Description: 
-// Top module for a Sync FIFO with APB, Arbiter and Data Correction
+// Top module for a sync FIFO with hanming code error dectecion and correction,
+// 8-channel dynamic priority readout arbiter, APB3 control.
 // Dependencies:
 // apb_slave.v fifo_wrapper.v arbiter.v
 //

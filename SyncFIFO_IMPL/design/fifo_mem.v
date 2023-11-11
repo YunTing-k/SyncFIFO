@@ -22,7 +22,7 @@
 //-FHDR//////////////////////////////////////////////////////////////////////////////
 `timescale 1ns / 1ps
 module fifo_mem
-#(parameter  WIDTH = 32,   // data bit width
+#(parameter  WIDTH = 38,   // data bit width
   parameter  DEPTH = 1024, // depth of mem
   parameter  ADDR = 10)    // address length
 (

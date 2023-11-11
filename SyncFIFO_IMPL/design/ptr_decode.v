@@ -49,15 +49,15 @@ assign err_index = {parity_3, parity_2, parity_1, parity_0};
 
 // orignal data remap and correct, [in]2 4 5 6 8 9 10 11 12 13 <==> 0 1 2 3 4 5 6 7 8 9[out]
 // only when index == 3 5 6 7 9 10 11 12 13 14, does the output need correction
-assign out_data[0] = (err_index == 4'd3) ? enc_data[2] : !enc_data[2];
-assign out_data[1] = (err_index == 4'd5) ? enc_data[4] : !enc_data[4];
-assign out_data[2] = (err_index == 4'd6) ? enc_data[5] : !enc_data[5];
-assign out_data[3] = (err_index == 4'd7) ? enc_data[6] : !enc_data[6];
-assign out_data[4] = (err_index == 4'd9) ? enc_data[8] : !enc_data[8];
-assign out_data[5] = (err_index == 4'd10) ? enc_data[9] : !enc_data[9];
-assign out_data[6] = (err_index == 4'd11) ? enc_data[10] : !enc_data[10];
-assign out_data[7] = (err_index == 4'd12) ? enc_data[11] : !enc_data[11];
-assign out_data[8] = (err_index == 4'd13) ? enc_data[12] : !enc_data[12];
-assign out_data[9] = (err_index == 4'd14) ? enc_data[13] : !enc_data[13];
+assign out_data[0] = (err_index == 4'd3) ? !enc_data[2] : enc_data[2];
+assign out_data[1] = (err_index == 4'd5) ? !enc_data[4] : enc_data[4];
+assign out_data[2] = (err_index == 4'd6) ? !enc_data[5] : enc_data[5];
+assign out_data[3] = (err_index == 4'd7) ? !enc_data[6] : enc_data[6];
+assign out_data[4] = (err_index == 4'd9) ? !enc_data[8] : enc_data[8];
+assign out_data[5] = (err_index == 4'd10) ? !enc_data[9] : enc_data[9];
+assign out_data[6] = (err_index == 4'd11) ? !enc_data[10] : enc_data[10];
+assign out_data[7] = (err_index == 4'd12) ? !enc_data[11] : enc_data[11];
+assign out_data[8] = (err_index == 4'd13) ? !enc_data[12] : enc_data[12];
+assign out_data[9] = (err_index == 4'd14) ? !enc_data[13] : enc_data[13];
 
 endmodule

@@ -110,8 +110,8 @@ fifo_mem_inst(
     .wr_en(apb_wr_en),                     // write enable
     .rd_clk(rd_clk),                       // read clock
     .rd_en(arbiter_rd_en),                 // read enable
-    .wr_addr(rd_ptr_decoded),              // (decoded) write address
-    .rd_addr(wr_ptr_decoded),              // (decoded) read address
+    .wr_addr(wr_ptr_decoded),              // (decoded) write address
+    .rd_addr(rd_ptr_decoded),              // (decoded) read address
     .wr_data(data_encoded),                // (encoded) write data
     .rst_n(rst_n),                         // reset signal active low
     .rd_data(fifo_raw)                     // (encoded) readout data
