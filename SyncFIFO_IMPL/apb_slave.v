@@ -27,10 +27,6 @@
 `define FIFO_STATUS       (32'h2000_0000 + 32'h04)   // FIFO status (read)
 
 module apb_slave
-#(parameter  ADDR = 10,    // address length
-  parameter  ERRPTR = 4,   // error ptr index length
-  parameter  WIDTH = 32,   // data length
-  parameter  ERRDATA = 6)  // error data index length
 (
     input  clk,                   // clock
     input  rst_n,                 // reset signal active low
@@ -144,6 +140,7 @@ always @(posedge clk or negedge rst_n) begin
         end
         SETUP:
         begin
+            access_done <= 1'b0;
             if ((paddr <= `FIFO_STATUS) && (paddr >= `FIFO_BASE_ADDR)) begin
                 access_valid <= 1'b1;
                 if (pwrite == 1'b1) begin // write request
