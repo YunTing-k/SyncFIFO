@@ -38,7 +38,7 @@ module data_write_tb();
 //-----------------------parameter define-----------------------//
 parameter PERIOD  = 2;   // clock period
 parameter DEPTH  = 1024; // FIFO depth
-parameter METHOD = 1;    // 0: APB discrete write
+parameter METHOD = 0;    // 0: APB discrete write
                          // 1: APB continuous write
 //--------------------------reg define--------------------------//
 reg clk;

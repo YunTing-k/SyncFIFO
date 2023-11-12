@@ -119,7 +119,7 @@ fifo_mem_inst(
 // data deocde
 data_decode data_decode_inst
 (
-    .enc_data(data_encoded),               // input encoded data
+    .enc_data(fifo_raw),                   // input encoded data
     .out_data(data_decoded),               // output decoded data
     .err_index(data_err_idx)               // error index, 0:no error detected, else:error detected
                                            // error take place in index = err_index - 1
