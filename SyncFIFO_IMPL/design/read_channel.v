@@ -17,6 +17,8 @@
 // cycle, sel = 1, and the fifo_read moudule make sure that the fifo get the exact
 // config of this channel. Since the channel's output has no thing to do with sel,
 // once the correct config is send to fifo, we can always get the correct data from it.
+// Meanwhile, any attempt to read an empty fifo while turn to read out the last data
+// poped out of fifo.
 // Dependencies:
 // N/A
 //
@@ -29,6 +31,13 @@
 //
 //-FHDR//////////////////////////////////////////////////////////////////////////////
 `timescale 1ns / 1ps
+`define FIFO_OUT_DATA       8'd0   // FIFO output data (read)
+`define DATA_ERR_IDX        8'd1   // FIFO data error index (read)
+`define WRITE_PTR           8'd2   // FIFO write pointer (read)
+`define WRITE_PTR_ERR_IDX   8'd3   // FIFO write pointer error index (read)
+`define READ_PTR            8'd4   // FIFO read pointer (read)
+`define READ_PTR_ERR_IDX    8'd5   // FIFO read pointer error index (read)
+
 module read_channel
 #(parameter  ADDR = 10,    // address length
   parameter  ERRPTR = 4,   // error ptr index length
@@ -160,12 +169,12 @@ always @(posedge clk or negedge rst_n) begin
         CONTROL: // control fifo
         begin
             cfg_done <= 1'b0;
-            if (addr == 8'd0 && sel == 1'b1) begin // fifo pop
+            if (addr == `FIFO_OUT_DATA && sel == 1'b1) begin // fifo pop
                 rd_en <= 1'b1;
                 rd_only <= 1'b0;
                 ctrl_done <= 1'b1;
             end
-            else if (addr != 8'd0 && sel == 1'b1) begin // fifo not pop
+            else if (addr != `FIFO_OUT_DATA && sel == 1'b1) begin // fifo not pop
                 rd_en <= 1'b1;
                 rd_only <= 1'b1;
                 ctrl_done <= 1'b1;
@@ -197,12 +206,12 @@ always @(posedge clk or negedge rst_n) begin
             wait_counter <= 3'd0;
             ready <= 1'b1;
             case(addr)
-            8'd0: data <= fifo_out;
-            8'd1: data <= {{(32-ERRDATA){1'b0}},data_err_idx};
-            8'd2: data <= {{(32-ADDR){1'b0}},wr_ptr};
-            8'd3: data <= {{(32-ERRPTR){1'b0}},wr_ptr_err_idx};
-            8'd4: data <= {{(32-ADDR){1'b0}},rd_ptr};
-            8'd5: data <= {{(32-ERRPTR){1'b0}},rd_ptr_err_idx};
+            `FIFO_OUT_DATA    : data <= fifo_out;
+            `DATA_ERR_IDX     : data <= {{(32-ERRDATA){1'b0}},data_err_idx};
+            `WRITE_PTR        : data <= {{(32-ADDR){1'b0}},wr_ptr};
+            `WRITE_PTR_ERR_IDX: data <= {{(32-ERRPTR){1'b0}},wr_ptr_err_idx};
+            `READ_PTR         : data <= {{(32-ADDR){1'b0}},rd_ptr};
+            `READ_PTR_ERR_IDX : data <= {{(32-ERRPTR){1'b0}},rd_ptr_err_idx};
             default: data <= fifo_out;
             endcase
             output_done <= 1'b1;

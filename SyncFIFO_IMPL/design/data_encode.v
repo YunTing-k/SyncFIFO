@@ -63,8 +63,8 @@ assign enc_data[0] = parity_0;
 assign enc_data[1] = parity_1;
 assign enc_data[3] = parity_2;
 assign enc_data[7] = parity_3;
-assign enc_data[15] = parity_3;
-assign enc_data[31] = parity_3;
+assign enc_data[15] = parity_4;
+assign enc_data[31] = parity_5;
 
 // orignal data remap [out][2,4:6,8:14,16:30,32:37] <==> 0:31[in]
 assign enc_data[2] = raw_data[0];

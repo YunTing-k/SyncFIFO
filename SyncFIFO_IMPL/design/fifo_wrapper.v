@@ -69,19 +69,19 @@ fifo_ctrl_inst(
     .fifo_status(fifo_status)              // fifo status (to APB slave and Arbiter, in decimal)
                                            // 0:empty, 1:(3/4)empty, 2:(2/4)empty, 3-(1/4)empty, 4-(0/4)empty, 5-full
 );
-
+ // read pointer encode
 ptr_encode ptr_encode_instA
 (
     .raw_data(rd_ptr),                     // input raw data to be encoded
     .enc_data(rd_ptr_encoded)              // output data after encoding
 );
-
+// write pointer encode
 ptr_encode ptr_encode_instB
 (
     .raw_data(wr_ptr),                     // input raw data to be encoded
     .enc_data(wr_ptr_encoded)              // output data after encoding
 );
-
+// read pointer decode
 ptr_decode ptr_decode_instA
 (
     .enc_data(rd_ptr_encoded),             // input encoded data
@@ -89,13 +89,13 @@ ptr_decode ptr_decode_instA
     .err_index(rd_ptr_err_idx)             // error index, 0:no error detected, else:error detected
                                            // error take place in index = err_index - 1
 );
-
+// data encode
 data_encode data_encode_inst
 (
     .raw_data(apb_write_data),             // input raw data to be encoded
     .enc_data(data_encoded)                // output data after encoding
 );
-
+// write pointer decode
 ptr_decode ptr_decode_instB
 (
     .enc_data(wr_ptr_encoded),             // input encoded data
@@ -116,10 +116,10 @@ fifo_mem_inst(
     .rst_n(rst_n),                         // reset signal active low
     .rd_data(fifo_raw)                     // (encoded) readout data
 );
-
+// data deocde
 data_decode data_decode_inst
 (
-    .enc_data(fifo_raw),                   // input encoded data
+    .enc_data(data_encoded),               // input encoded data
     .out_data(data_decoded),               // output decoded data
     .err_index(data_err_idx)               // error index, 0:no error detected, else:error detected
                                            // error take place in index = err_index - 1

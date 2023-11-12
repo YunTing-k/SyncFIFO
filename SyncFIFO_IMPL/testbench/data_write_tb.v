@@ -8,8 +8,15 @@
 // Target Device: N/A
 // Tool versions: QuestaSim 10.6c
 // Description: 
-// Testbench of the Sync write data, from APB -> FIFO, to verify the basic function
-// of APB slave and FIFO ctrl.
+// Testbench of the Sync FIFO write data, from APB -> FIFO, to verify the basic function
+// of APB slave and FIFO ctrl. This testbench verify two APB write mode:
+//     [1]: Discrete write to FIFO with APB slave
+//     [2]: Continuous write to FIFO with APB slave
+//     Note: Modify the write mode with PARAMETER METHOD
+// This testbench also verify the basic function of FIFO:
+//     [1]: Basic FIFO write
+//     [2]: FIFO status varies with FIFO stack volume
+//     [3]: FIFO and APB behavior during a request after FIFO full
 // Dependencies:
 // top_wrapper.v
 //
@@ -31,7 +38,8 @@ module data_write_tb();
 //-----------------------parameter define-----------------------//
 parameter PERIOD  = 2;   // clock period
 parameter DEPTH  = 1024; // FIFO depth
-
+parameter METHOD = 1;    // 0: APB discrete write
+                         // 1: APB continuous write
 //--------------------------reg define--------------------------//
 reg clk;
 reg rst_n;
@@ -117,38 +125,65 @@ always @(posedge clk or negedge rst_n) begin
     if (rst_n == 1'b0) begin
         write_counter <= 11'd0;
     end
-    else begin
+    else if (METHOD == 1) begin // continuous write
+        if (write_counter == 1'b0) begin
+            write_counter <= write_counter + 1'b1;
+            apb_task_C_start(`FIFO_WRITE_DATA, {{21{1'b0}}, write_counter}, 1'b1);
+        end
+        else if (write_counter < DEPTH - 1) begin
+            write_counter <= write_counter + 1'b1;
+            apb_task_C_busy(`FIFO_WRITE_DATA, {{21{1'b0}}, write_counter}, 1'b1);
+        end
+        else if (write_counter < DEPTH) begin
+            write_counter <= write_counter + 1'b1;
+            apb_task_C_end(`FIFO_WRITE_DATA, {{21{1'b0}}, write_counter}, 1'b1);
+        end
+        else begin // fifo full test
+            fork
+            #10 $stop;
+            apb_task_C_start(`FIFO_WRITE_DATA, {{21{1'b0}}, write_counter}, 1'b1);
+            join
+        end
+    end
+    else begin // discrete write
         if (write_counter < DEPTH) begin
             write_counter <= write_counter + 1'b1;
-            apb_task(`FIFO_WRITE_DATA, {{21{1'b0}}, write_counter}, 1'b1);
+            apb_task_D(`FIFO_WRITE_DATA, {{21{1'b0}}, write_counter}, 1'b1);
         end
-        else begin
-            $stop;
+        else begin // fifo full test
+            fork
+            #10 $stop;
+            apb_task_D(`FIFO_WRITE_DATA, {{21{1'b0}}, write_counter}, 1'b1);
+            join
         end
     end
 end
 
-//----------------------[APB Slave Task Discrete]-----------------------//
-task apb_task;
+// [APB Slave Task Discrete]
+task apb_task_D;
     input [31:0] addr;
     input [31:0] wdata;
     input rw;
 
 begin
+    // inital stage
     psel    = 1'b0 ;
     penable = 1'b0 ;
     pwrite  = 1'b0 ;
     paddr   = 32'd0;
     pwdata  = 32'd0;
+    // setup stage
     @(posedge clk)
         paddr = addr;
         pwrite = rw;
         psel = 1'b1;
         pwdata = wdata;
         penable = 1'b0 ;
+    // access stage
     @(posedge clk)
         penable = 1'b1;
-    @(posedge clk)
+    // return to idle
+    @(negedge pready)
         psel    = 1'b0 ;
         penable = 1'b0 ;
         pwrite  = 1'b0 ;
@@ -157,21 +192,73 @@ begin
 end
 endtask
 
-//-----------------------[APB Read Task]-----------------------//
-task apb_read;
-    input [31:0]  addr;
-    output [31:0] data;
+// [APB Slave Task Continuous]
+task apb_task_C_start;
+    input [31:0] addr;
+    input [31:0] wdata;
+    input rw;
+
 begin
-    @(posedge clk);
-        paddr <= addr;
-        pwrite <= 1'b0;
-        psel <= 1'b1;
-    @(posedge clk);
-        penable <= 1'b1;
-    @(posedge clk);
-        psel <= 1'b0;
-        penable <= 1'b0;
-        data = prdata;
+    // inital stage
+    psel    = 1'b0 ;
+    penable = 1'b0 ;
+    pwrite  = 1'b0 ;
+    paddr   = 32'd0;
+    pwdata  = 32'd0;
+    // setup stage
+    @(posedge clk)
+        paddr = addr;
+        pwrite = rw;
+        psel = 1'b1;
+        pwdata = wdata;
+        penable = 1'b0 ;
+    // access stage
+    @(posedge clk)
+        penable = 1'b1;
+end
+endtask
+
+task apb_task_C_busy;
+    input [31:0] addr;
+    input [31:0] wdata;
+    input rw;
+
+begin
+    // setup stage
+    @(negedge pready)
+        psel    = 1'b1 ;
+        penable = 1'b0 ;
+        pwrite  = rw   ;
+        paddr   = addr ;
+        pwdata  = wdata;
+    @(posedge clk)
+        penable = 1'b1;
+end
+endtask
+
+task apb_task_C_end;
+    input [31:0] addr;
+    input [31:0] wdata;
+    input rw;
+
+begin
+    // setup stage
+    @(negedge pready)
+        psel    = 1'b1 ;
+        penable = 1'b0 ;
+        pwrite  = rw   ;
+        paddr   = addr ;
+        pwdata  = wdata;
+    // access stage
+    @(posedge clk)
+        penable = 1'b1;
+    // return to idle
+    @(negedge pready)
+        psel    = 1'b0 ;
+        penable = 1'b0 ;
+        pwrite  = 1'b0 ;
+        paddr   = 32'd0;
+        pwdata  = 32'd0;
 end
 endtask
 
