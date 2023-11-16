@@ -18,6 +18,7 @@
 // [Date]         [By]         [Version]         [Change Log]
 // ---------------------------------------------------------------------------------
 // 2023/11/03     Yu Huang     1.0               First implmentation
+// 2023/11/15     Yu Huang     1.1               Support of 0-priority arbitration
 // ---------------------------------------------------------------------------------
 //
 //-FHDR//////////////////////////////////////////////////////////////////////////////
@@ -81,7 +82,7 @@ module arbiter
 );
 
 wire [7:0] sel;
-wire [7:0] priority0, priority1, priority2, priority3, priority4, priority5, priority6, priority7;
+wire [8:0] priority0, priority1, priority2, priority3, priority4, priority5, priority6, priority7;
 wire rd_en0, rd_en1, rd_en2, rd_en3, rd_en4, rd_en5, rd_en6, rd_en7;
 wire rd_only0, rd_only1, rd_only2, rd_only3, rd_only4, rd_only5, rd_only6, rd_only7;
 
@@ -122,7 +123,7 @@ read_channel #(.ADDR(ADDR), .ERRPTR(ERRPTR), .WIDTH(WIDTH), .ERRDATA(ERRDATA))
 channel1(
     .clk             (clk),               // clock
     .rst_n           (rst_n),             // reset signal active low
-    .sel             (sel[1]),               // select signal derived by the priority
+    .sel             (sel[1]),            // select signal derived by the priority
     .valid_cfg       (valid_dst1),        // [config] valid signal of channel handshake
     .priority_cfg    (priority_dst1),     // [config] priority of channel handshake
     .addr_cfg        (addr_dst1),         // [config] address of the readout data of channel handshake
@@ -143,7 +144,7 @@ read_channel #(.ADDR(ADDR), .ERRPTR(ERRPTR), .WIDTH(WIDTH), .ERRDATA(ERRDATA))
 channel2(
     .clk             (clk),               // clock
     .rst_n           (rst_n),             // reset signal active low
-    .sel             (sel[2]),               // select signal derived by the priority
+    .sel             (sel[2]),            // select signal derived by the priority
     .valid_cfg       (valid_dst2),        // [config] valid signal of channel handshake
     .priority_cfg    (priority_dst2),     // [config] priority of channel handshake
     .addr_cfg        (addr_dst2),         // [config] address of the readout data of channel handshake
@@ -164,7 +165,7 @@ read_channel #(.ADDR(ADDR), .ERRPTR(ERRPTR), .WIDTH(WIDTH), .ERRDATA(ERRDATA))
 channel3(
     .clk             (clk),               // clock
     .rst_n           (rst_n),             // reset signal active low
-    .sel             (sel[3]),               // select signal derived by the priority
+    .sel             (sel[3]),            // select signal derived by the priority
     .valid_cfg       (valid_dst3),        // [config] valid signal of channel handshake
     .priority_cfg    (priority_dst3),     // [config] priority of channel handshake
     .addr_cfg        (addr_dst3),         // [config] address of the readout data of channel handshake
@@ -185,7 +186,7 @@ read_channel #(.ADDR(ADDR), .ERRPTR(ERRPTR), .WIDTH(WIDTH), .ERRDATA(ERRDATA))
 channel4(
     .clk             (clk),               // clock
     .rst_n           (rst_n),             // reset signal active low
-    .sel             (sel[4]),               // select signal derived by the priority
+    .sel             (sel[4]),            // select signal derived by the priority
     .valid_cfg       (valid_dst4),        // [config] valid signal of channel handshake
     .priority_cfg    (priority_dst4),     // [config] priority of channel handshake
     .addr_cfg        (addr_dst4),         // [config] address of the readout data of channel handshake
@@ -206,7 +207,7 @@ read_channel #(.ADDR(ADDR), .ERRPTR(ERRPTR), .WIDTH(WIDTH), .ERRDATA(ERRDATA))
 channel5(
     .clk             (clk),               // clock
     .rst_n           (rst_n),             // reset signal active low
-    .sel             (sel[5]),               // select signal derived by the priority
+    .sel             (sel[5]),            // select signal derived by the priority
     .valid_cfg       (valid_dst5),        // [config] valid signal of channel handshake
     .priority_cfg    (priority_dst5),     // [config] priority of channel handshake
     .addr_cfg        (addr_dst5),         // [config] address of the readout data of channel handshake
@@ -227,7 +228,7 @@ read_channel #(.ADDR(ADDR), .ERRPTR(ERRPTR), .WIDTH(WIDTH), .ERRDATA(ERRDATA))
 channel6(
     .clk             (clk),               // clock
     .rst_n           (rst_n),             // reset signal active low
-    .sel             (sel[6]),               // select signal derived by the priority
+    .sel             (sel[6]),            // select signal derived by the priority
     .valid_cfg       (valid_dst6),        // [config] valid signal of channel handshake
     .priority_cfg    (priority_dst6),     // [config] priority of channel handshake
     .addr_cfg        (addr_dst6),         // [config] address of the readout data of channel handshake
@@ -248,7 +249,7 @@ read_channel #(.ADDR(ADDR), .ERRPTR(ERRPTR), .WIDTH(WIDTH), .ERRDATA(ERRDATA))
 channel7(
     .clk             (clk),               // clock
     .rst_n           (rst_n),             // reset signal active low
-    .sel             (sel[7]),               // select signal derived by the priority
+    .sel             (sel[7]),            // select signal derived by the priority
     .valid_cfg       (valid_dst7),        // [config] valid signal of channel handshake
     .priority_cfg    (priority_dst7),     // [config] priority of channel handshake
     .addr_cfg        (addr_dst7),         // [config] address of the readout data of channel handshake

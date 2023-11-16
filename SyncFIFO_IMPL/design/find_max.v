@@ -18,24 +18,25 @@
 // [Date]         [By]         [Version]         [Change Log]
 // ---------------------------------------------------------------------------------
 // 2023/11/06     Yu Huang     1.0               First implmentation
+// 2023/11/15     Yu Huang     1.1               Support of 0-priority arbitration
 // ---------------------------------------------------------------------------------
 //
 //-FHDR//////////////////////////////////////////////////////////////////////////////
 `timescale 1ns / 1ps
 module find_max
 (
-    input  [7:0] priority_0,        // input priority of channel-0
-    input  [7:0] priority_1,        // input priority of channel-1
-    input  [7:0] priority_2,        // input priority of channel-2
-    input  [7:0] priority_3,        // input priority of channel-3
-    input  [7:0] priority_4,        // input priority of channel-4
-    input  [7:0] priority_5,        // input priority of channel-5
-    input  [7:0] priority_6,        // input priority of channel-6
-    input  [7:0] priority_7,        // input priority of channel-7
+    input  [8:0] priority_0,        // input priority of channel-0
+    input  [8:0] priority_1,        // input priority of channel-1
+    input  [8:0] priority_2,        // input priority of channel-2
+    input  [8:0] priority_3,        // input priority of channel-3
+    input  [8:0] priority_4,        // input priority of channel-4
+    input  [8:0] priority_5,        // input priority of channel-5
+    input  [8:0] priority_6,        // input priority of channel-6
+    input  [8:0] priority_7,        // input priority of channel-7
     output [7:0] select             // output select signal, one hot
 );
-wire [7:0] pri_l1_0, pri_l1_1, pri_l1_2, pri_l1_3; // first layer priority compare result
-wire [7:0] pri_l2_0, pri_l2_1;                     // second layer priority compare result
+wire [8:0] pri_l1_0, pri_l1_1, pri_l1_2, pri_l1_3; // first layer priority compare result
+wire [8:0] pri_l2_0, pri_l2_1;                     // second layer priority compare result
 wire [2:0] idx_l1_0, idx_l1_1, idx_l1_2, idx_l1_3; // first layer index result
 wire [2:0] idx_l2_0, idx_l2_1;                     // second layer index result
 wire [2:0] idx_l3;                                 // third layer index result

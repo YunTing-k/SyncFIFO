@@ -8,17 +8,17 @@
 // Target Device: N/A
 // Tool versions: QuestaSim 10.6c
 // Description: 
-// Readout channel implementation, with valid-ready handshake. To prevent the race
-// between channels, channel priority will be cleared after the control signal is
-// outputted, if the select signal changes to 0 before the control signal is outputted,
-// means the control is taken by another channel which is just one cycle after this
-// channel request read data. We need to wait until the sel change back to 1, this
-// means we can finally control the fifo. Then we send the control signal, in this
-// cycle, sel = 1, and the fifo_read moudule make sure that the fifo get the exact
-// config of this channel. Since the channel's output has no thing to do with sel,
-// once the correct config is send to fifo, we can always get the correct data from it.
-// Meanwhile, any attempt to read an empty fifo while turn to read out the last data
-// poped out of fifo.
+// Readout channel implementation, with valid-ready handshake. We set the configured
+// priority as [input prioirty+1]. To prevent the race between channels, channel priority
+// will be cleared after the control signal is outputted, if the select signal changes
+// to 0 before the control signal is outputted, means the control is taken by another
+// channel which is just one cycle after this channel request read data. We need to
+// wait until the sel change back to 1, this means we can finally control the fifo.
+// Then we send the control signal, in this cycle, sel = 1, and the fifo_read moudule
+// make sure that the fifo get the exact config of this channel. Since the channel's
+// output has no thing to do with sel, once the correct config is send to fifo, we can
+// always get the correct data from it. Meanwhile, any attempt to read an empty fifo
+// will turn to read out the last data poped out of fifo.
 // Dependencies:
 // N/A
 //
@@ -27,6 +27,7 @@
 // [Date]         [By]         [Version]         [Change Log]
 // ---------------------------------------------------------------------------------
 // 2023/11/10     Yu Huang     1.0               First implmentation
+// 2023/11/15     Yu Huang     1.1               Support of 0-priority arbitration
 // ---------------------------------------------------------------------------------
 //
 //-FHDR//////////////////////////////////////////////////////////////////////////////
@@ -56,7 +57,7 @@ module read_channel
     input  [ERRPTR - 1:0] wr_ptr_err_idx,  // write pointer error index, [addr = 3]
     input  [ADDR - 1:0] rd_ptr,            // read pointer,              [addr = 4]
     input  [ERRPTR - 1:0] rd_ptr_err_idx,  // read pointer error index,  [addr = 5]
-    output reg [7:0] priority,             // configured priority in reg
+    output reg [8:0] priority,             // configured priority in reg
     output reg [31:0] data,                // readout data
     output reg rd_en,                      // read enable signal
     output reg rd_only,                    // read only signal
@@ -131,7 +132,7 @@ end
 always @(posedge clk or negedge rst_n) begin
     if (rst_n == 1'b0) begin
         // output reg reset
-        priority <= 8'd0;
+        priority <= 9'd0;
         data <= 32'd0;
         rd_en <= 1'b0;
         rd_only <= 1'b0;
@@ -162,7 +163,8 @@ always @(posedge clk or negedge rst_n) begin
         end
         CONFIG: //config priority and addr
         begin
-            priority <= priority_cfg;
+            // configured pri = input pri + 1
+            priority <= {1'b0, priority_cfg} + 1'b1;
             addr <= addr_cfg;
             cfg_done <= 1'b1;
         end
@@ -188,7 +190,7 @@ always @(posedge clk or negedge rst_n) begin
         WAITDATA: // wait for data ready from ctr -> fifo -> reg
         begin
             ctrl_done <= 1'b0;
-            priority <= 8'd0; // clear priority to give back the control
+            priority <= 9'd0; // clear priority to give back the control
             rd_en <= 1'b0; // avoid redundant request
             rd_only <= 1'b0; // avoid redundant request
             if (wait_counter < (3'd2 - 3'd1)) begin
@@ -219,6 +221,7 @@ always @(posedge clk or negedge rst_n) begin
         default:
         begin
             // output reg reset
+            priority <= 9'd0;
             rd_en <= 1'b0;
             rd_only <= 1'b0;
             ready <= 1'b0;
