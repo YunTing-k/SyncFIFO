@@ -1,5 +1,4 @@
 package env;
-
     import src_agent_main ::*;
     import dst_agent_main ::*;  
 
@@ -30,7 +29,7 @@ package env;
 
             // connect to src_agent
             this.src_agent.set_interface(
-                sch_0        
+                sch_0
             );
             // ...
 
@@ -51,6 +50,7 @@ package env;
                     $display("[ENV] start work : Apb_Write/Read !");
                     // example :
                     // in this example, we test our apb port.
+                    src_agent.single_tran(0, 32'hFFFF_FFFF);
                     #10000
                     $display("[ENV] finish work : Apb_Write/Read !");
                 end

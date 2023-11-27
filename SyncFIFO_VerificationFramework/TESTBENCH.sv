@@ -15,7 +15,7 @@ module testbench_top ();
 // parameters
 //-----------------------------------------------------
 
-    parameter CLK_PERIOD = 10;
+    parameter CLK_PERIOD = 2;
 
 //-----------------------------------------------------
 // signals define
@@ -68,16 +68,12 @@ module testbench_top ();
 endmodule
 
 program testbench(
-
     input clk  ,
     input rst_n,
-    
     // your modport connection
     duttb_intf_srcchannel.TBconnect sch_0
-
-
 );
-    
+
     import env ::*;   // impport your ENV object
     env_ctrl envctrl; // first declare it
 
@@ -117,12 +113,12 @@ program testbench(
                 envctrl.run("Apb_Write/Read");            // in this demo, we just driver a handshake process in channel 0
                 envctrl.run("Time_Run");                      // time out limitation
             join_any
-            disable fork;        
+            disable fork;
 
         // END
         // ---------------------------------------------------        
         $display("[TB-SYS] testbench system has done all the work, exit !");
-
+        $stop;
     end
 
 endprogram

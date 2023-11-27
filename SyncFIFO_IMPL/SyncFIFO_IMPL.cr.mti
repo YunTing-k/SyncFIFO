@@ -82,12 +82,12 @@ Model Technology ModelSim SE-64 vlog 2019.2 Compiler 2019.04 Apr 17 2019
 Top level modules:
 	find_max
 
-} {} {}} C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/testbench/data_write_tb.v {1 {vlog -work work -vopt -stats=none C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/testbench/data_write_tb.v
+} {} {}} C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/fifo_read.v {1 {vlog -work work -vopt -stats=none C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/fifo_read.v
 Model Technology ModelSim SE-64 vlog 2019.2 Compiler 2019.04 Apr 17 2019
--- Compiling module data_write_tb
+-- Compiling module fifo_read
 
 Top level modules:
-	data_write_tb
+	fifo_read
 
 } {} {}} C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/data_encode.v {1 {vlog -work work -vopt -stats=none C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/data_encode.v
 Model Technology ModelSim SE-64 vlog 2019.2 Compiler 2019.04 Apr 17 2019
@@ -96,12 +96,12 @@ Model Technology ModelSim SE-64 vlog 2019.2 Compiler 2019.04 Apr 17 2019
 Top level modules:
 	data_encode
 
-} {} {}} C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/fifo_read.v {1 {vlog -work work -vopt -stats=none C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/fifo_read.v
+} {} {}} C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/testbench/data_write_tb.v {1 {vlog -work work -vopt -stats=none C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/testbench/data_write_tb.v
 Model Technology ModelSim SE-64 vlog 2019.2 Compiler 2019.04 Apr 17 2019
--- Compiling module fifo_read
+-- Compiling module data_write_tb
 
 Top level modules:
-	fifo_read
+	data_write_tb
 
 } {} {}} C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/arbiter.v {1 {vlog -work work -vopt -stats=none C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/arbiter.v
 Model Technology ModelSim SE-64 vlog 2019.2 Compiler 2019.04 Apr 17 2019

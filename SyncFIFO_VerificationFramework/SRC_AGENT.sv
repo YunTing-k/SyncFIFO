@@ -33,7 +33,7 @@
 package src_agent_objects;
     // Package of APB agent objects:
     //   [1] 
-    class src_randomgen_datapkg;
+    class src_randomgen_datapkg; // Data used in APB agent
         bit mode;         // APB access mode: 0-read, 1-write
         bit [31:0] data;  // APB access data
     endclass
@@ -55,17 +55,17 @@ package src_agent_objects;
             input [31:0] data   // APB access data
         );
             src_randomgen_datapkg tran_data;
-            tran_data   = new();
+            tran_data = new();      // consturctor of the src_randomgen_datapkg class
             tran_data.mode = mode;  // get APB access mode
             tran_data.data = data;  // get APB access data
             gen2drv.put(tran_data); // put the data into mailbox for driver to get
         endtask
     endclass
 
-    class src_driver;  // Driver of the APB agent
+    class src_driver;  // Driver of the APB agent, data transimit class define
         // mailbox for generated data to driver
         mailbox #(src_randomgen_datapkg) gen2drv;
-        function new(
+        function new( // constructor of driver class
             mailbox #(src_randomgen_datapkg) gen2drv
         );
             this.gen2drv = gen2drv;
@@ -79,7 +79,7 @@ package src_agent_objects;
         function void set_interface(
             virtual duttb_intf_srcchannel.TBconnect source_ch
         );
-            this.active_channel = source_ch;
+            this.active_channel = source_ch; // set src class driver channel
             // port initialization to avoid 'x' state in dut
             this.active_channel.channel_pwrite = 1'b0;
             this.active_channel.channel_psel = 1'b0;
@@ -92,7 +92,7 @@ package src_agent_objects;
         // [data_write]: APB write data handhsake
         // -------------------------------------------------------------------------
         task data_write();
-            // get data from mailbox
+            // get data from mailbox to random_data_get
             src_randomgen_datapkg random_data_get;
             this.gen2drv.get(random_data_get);
             // APB config
@@ -119,53 +119,47 @@ package src_agent_objects;
 endpackage
 
 package src_agent_main;
-    
-    import src_agent_objects ::*;
-
-    class src_agent;
-
+    // Package of APB agent main realization:
+    import src_agent_objects ::*; // import defined agent objects
+    class src_agent; // source agent realization
         // -------------------------------------------------------------------------
         // BUILD
         // -------------------------------------------------------------------------
-        src_generator                    src_generator;
-        mailbox #(src_randomgen_datapkg) mailbox_gen2drv;
-        src_driver                       src_driver0;
-
-        function new();
-            this.mailbox_gen2drv = new(16);
-            this.src_generator   = new(mailbox_gen2drv);
-            this.src_driver0     = new(mailbox_gen2drv);
+        src_generator                    src_generator;   // src generator instance
+        mailbox #(src_randomgen_datapkg) mailbox_gen2drv; // mailbox of src agent
+        src_driver                       src_driver;     // src driver instance
+ 
+        function new(); // constuctor of src agent
+            this.mailbox_gen2drv = new(16);               // create a 16 size mailbox
+            this.src_generator   = new(mailbox_gen2drv);  // pass mailbox to data gen
+            this.src_driver     = new(mailbox_gen2drv);  // pass mailbox to data drive
         endfunction
-        
+
         // -------------------------------------------------------------------------
         // CONNECT
         // -------------------------------------------------------------------------
         function void set_interface(
             virtual duttb_intf_srcchannel.TBconnect sch_0
-        );   
+        );
             // connect to src_driver
-            this.src_driver0.set_interface(sch_0);
+            this.src_driver.set_interface(sch_0);
 
         endfunction
 
         // -------------------------------------------------------------------------
-        // FUN : single data tran
+        // FUN : Single data transimit
         // -------------------------------------------------------------------------
         task single_tran(
-            input [1:0] mod, // write or read (need update other modules)
-            input data
+            input [1:0]  mode, // write or read
+            input [31:0] data  // acess data
          );
             // generate data
-            //this.src_generator.data_gen(data);
-
+            this.src_generator.data_gen(mode, data);
             // select and ask the driver to write the data
-            src_driver0.data_write();
+            src_driver.data_write();
 
         endtask
 
     endclass
 
 endpackage
-
-
-
