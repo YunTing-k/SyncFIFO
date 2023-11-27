@@ -20,15 +20,14 @@ n@_opt
 Z3 OL;O;2019.2;69
 R0
 T_opt1
-!s110 1699803206
-V8;iX1TJV7k<8C>o>_;dXn0
-04 9 4 work apb_io_tb fast 0
-=1-50ebf692045c-6550f046-db-858
+!s110 1700735481
+VNl9DGdSHQXC4P;>8Mc9M^1
+04 13 4 work data_write_tb fast 0
+=24-50ebf692045c-655f29f9-2c6-58c4
 R1
 R2
 n@_opt1
 R3
-R0
 T_opt2
 !s110 1699804842
 VecJZ;]IL1:lS:H;hL<TG@3
@@ -40,7 +39,7 @@ n@_opt2
 R3
 R0
 vapb_io_tb
-Z4 !s110 1700115720
+Z4 !s110 1700735471
 !i10b 1
 !s100 6gjZNnNL9U6HM4ozFgefE0
 !s11b ?LJ=YkPLRMSFH`=9GoESg1
@@ -55,21 +54,21 @@ Z7 OL;L;2019.2;69
 r1
 !s85 0
 31
-Z8 !s108 1700115720.000000
+Z8 !s108 1700735471.000000
 !s107 C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/testbench/apb_io_tb.v|
 !s90 -reportprogress|300|-work|work|-vopt|-stats=none|C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/testbench/apb_io_tb.v|
 !i113 0
 Z9 o-work work -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
 R2
 vapb_slave
-R4
+Z10 !s110 1700735470
 !i10b 1
 !s100 J5;D@V:Id[>W@M?]GW<Fc0
 !s11b ncAm^67gIc4O3K_T?TGYT1
 ISgVA_Pc[@FbCOzmLaY69g2
 R5
 R6
-w1699800118
+w1700119866
 8C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/apb_slave.v
 FC:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/apb_slave.v
 L0 29
@@ -77,14 +76,14 @@ R7
 r1
 !s85 0
 31
-R8
+Z11 !s108 1700735470.000000
 !s107 C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/apb_slave.v|
 !s90 -reportprogress|300|-work|work|-vopt|-stats=none|C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/apb_slave.v|
 !i113 0
 R9
 R2
 varbiter
-R4
+R10
 !i10b 1
 !s100 P2z2K?5Z_mdUi054>H4b82
 !s11b iOA>5ZKCJY=`FYg87jK7m2
@@ -94,12 +93,12 @@ R6
 w1700115600
 8C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/arbiter.v
 FC:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/arbiter.v
-Z10 L0 26
+Z12 L0 26
 R7
 r1
 !s85 0
 31
-R8
+R11
 !s107 C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/arbiter.v|
 !s90 -reportprogress|300|-work|work|-vopt|-stats=none|C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/arbiter.v|
 !i113 0
@@ -116,7 +115,7 @@ R6
 w1699774054
 8C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/testbench/arbiter_read_tb.v
 FC:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/testbench/arbiter_read_tb.v
-Z11 L0 39
+Z13 L0 39
 R7
 r1
 !s85 0
@@ -128,7 +127,7 @@ R8
 R9
 R2
 vdata_decode
-R4
+R10
 !i10b 1
 !s100 cmE8mcg;=7V0JXoYo_;ce1
 !s11b L<RZRHZf6dU=]B4fAUm:e0
@@ -138,19 +137,19 @@ R6
 w1699777285
 8C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/data_decode.v
 FC:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/data_decode.v
-Z12 L0 25
+Z14 L0 25
 R7
 r1
 !s85 0
 31
-R8
+R11
 !s107 C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/data_decode.v|
 !s90 -reportprogress|300|-work|work|-vopt|-stats=none|C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/data_decode.v|
 !i113 0
 R9
 R2
 vdata_encode
-R4
+R10
 !i10b 1
 !s100 `LJ5VT8hm4:<eHdNQRXge2
 !s11b [5606gT_@U;=kDo<FQR@40
@@ -160,12 +159,12 @@ R6
 w1699777256
 8C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/data_encode.v
 FC:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/data_encode.v
-R12
+R14
 R7
 r1
 !s85 0
 31
-R8
+R11
 !s107 C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/data_encode.v|
 !s90 -reportprogress|300|-work|work|-vopt|-stats=none|C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/data_encode.v|
 !i113 0
@@ -182,7 +181,7 @@ R6
 w1699772381
 8C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/testbench/data_read_tb.v
 FC:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/testbench/data_read_tb.v
-R11
+R13
 R7
 r1
 !s85 0
@@ -196,12 +195,12 @@ R2
 vdata_write_tb
 R4
 !i10b 1
-!s100 40cFHAXUigZI00SoVnG0`2
-!s11b JHLVJ8V>BN2c1fKPa=izY2
-InfE6^JHoU<ZG>aWTmfL3;1
+!s100 GVA45[9M3>CYgd:gYS0jK3
+!s11b VLfdbZj0QLKjCCKiJMTH@1
+I1GR]WdE`<<F:aM77UeJBN2
 R5
 R6
-w1699803042
+w1700735431
 8C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/testbench/data_write_tb.v
 FC:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/testbench/data_write_tb.v
 L0 36
@@ -216,7 +215,7 @@ R8
 R9
 R2
 vfifo_ctrl
-R4
+R10
 !i10b 1
 !s100 oAg76O;8Y>DVWQfM[BoC52
 !s11b Lo:IBz66HZmFdoiZL4_iR1
@@ -226,19 +225,19 @@ R6
 w1699713295
 8C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/fifo_ctrl.v
 FC:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/fifo_ctrl.v
-Z13 L0 24
+Z15 L0 24
 R7
 r1
 !s85 0
 31
-R8
+R11
 !s107 C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/fifo_ctrl.v|
 !s90 -reportprogress|300|-work|work|-vopt|-stats=none|C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/fifo_ctrl.v|
 !i113 0
 R9
 R2
 vfifo_mem
-R4
+R10
 !i10b 1
 !s100 ee;Skg@BSkGD97iQj:M8k1
 !s11b ccESTkRVW[M6aMnHDfGCJ0
@@ -248,19 +247,19 @@ R6
 w1699711732
 8C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/fifo_mem.v
 FC:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/fifo_mem.v
-R13
+R15
 R7
 r1
 !s85 0
 31
-R8
+R11
 !s107 C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/fifo_mem.v|
 !s90 -reportprogress|300|-work|work|-vopt|-stats=none|C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/fifo_mem.v|
 !i113 0
 R9
 R2
 vfifo_read
-R4
+R10
 !i10b 1
 !s100 kCfFd`z58Un2PJHN7nX>02
 !s11b [h@:>bjmoGeDdK]^FBJo12
@@ -270,19 +269,19 @@ R6
 w1699612178
 8C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/fifo_read.v
 FC:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/fifo_read.v
-R13
+R15
 R7
 r1
 !s85 0
 31
-R8
+R11
 !s107 C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/fifo_read.v|
 !s90 -reportprogress|300|-work|work|-vopt|-stats=none|C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/fifo_read.v|
 !i113 0
 R9
 R2
 vfifo_reg
-R4
+R10
 !i10b 1
 !s100 Q1ASlNe?VZ`b15KK0n5[@0
 !s11b j]UK^?1G?ngZ::WnifXPA1
@@ -292,19 +291,19 @@ R6
 w1699628487
 8C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/fifo_reg.v
 FC:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/fifo_reg.v
-R12
+R14
 R7
 r1
 !s85 0
 31
-R8
+R11
 !s107 C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/fifo_reg.v|
 !s90 -reportprogress|300|-work|work|-vopt|-stats=none|C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/fifo_reg.v|
 !i113 0
 R9
 R2
 vfifo_wrapper
-R4
+R10
 !i10b 1
 !s100 N[05QCbIH8MK]D@=_6MoG1
 !s11b kjDk_6oY0mYWXcX5fJeX<1
@@ -319,14 +318,14 @@ R7
 r1
 !s85 0
 31
-R8
+R11
 !s107 C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/fifo_wrapper.v|
 !s90 -reportprogress|300|-work|work|-vopt|-stats=none|C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/fifo_wrapper.v|
 !i113 0
 R9
 R2
 vfind_max
-R4
+R10
 !i10b 1
 !s100 4eLO^TPH1N4GLP`QXFT]D3
 !s11b AYl=>M:IkaFCY8>[RWaHA0
@@ -336,12 +335,12 @@ R6
 w1700115398
 8C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/find_max.v
 FC:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/find_max.v
-R10
+R12
 R7
 r1
 !s85 0
 31
-R8
+R11
 !s107 C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/find_max.v|
 !s90 -reportprogress|300|-work|work|-vopt|-stats=none|C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/find_max.v|
 !i113 0
@@ -370,7 +369,7 @@ R8
 R9
 R2
 vptr_decode
-R4
+R10
 !i10b 1
 !s100 >f_TzTn07I<KCmmXdBdhC1
 !s11b eZToY4n7=2cDl?PeMNczL3
@@ -380,19 +379,19 @@ R6
 w1699713966
 8C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/ptr_decode.v
 FC:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/ptr_decode.v
-R12
+R14
 R7
 r1
 !s85 0
 31
-R8
+R11
 !s107 C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/ptr_decode.v|
 !s90 -reportprogress|300|-work|work|-vopt|-stats=none|C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/ptr_decode.v|
 !i113 0
 R9
 R2
 vptr_encode
-R4
+R10
 !i10b 1
 !s100 :4g=o<1jaK><ESGo`_U=C3
 !s11b b1_8PiK629UzLH4DRdbSE3
@@ -402,12 +401,12 @@ R6
 w1699254624
 8C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/ptr_encode.v
 FC:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/ptr_encode.v
-R12
+R14
 R7
 r1
 !s85 0
 31
-R8
+R11
 !s107 C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/ptr_encode.v|
 !s90 -reportprogress|300|-work|work|-vopt|-stats=none|C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/ptr_encode.v|
 !i113 0
@@ -446,7 +445,7 @@ R6
 w1699705328
 8C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/top_wrapper.v
 FC:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/top_wrapper.v
-R12
+R14
 R7
 r1
 !s85 0

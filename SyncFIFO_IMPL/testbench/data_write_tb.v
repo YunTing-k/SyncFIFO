@@ -38,7 +38,7 @@ module data_write_tb();
 //-----------------------parameter define-----------------------//
 parameter PERIOD  = 2;   // clock period
 parameter DEPTH  = 1024; // FIFO depth
-parameter METHOD = 0;    // 0: APB discrete write
+parameter METHOD = 1;    // 0: APB discrete write
                          // 1: APB continuous write
 //--------------------------reg define--------------------------//
 reg clk;
@@ -126,7 +126,7 @@ always @(posedge clk or negedge rst_n) begin
         write_counter <= 11'd0;
     end
     else if (METHOD == 1) begin // continuous write
-        if (write_counter == 1'b0) begin
+        if (write_counter == 11'd0) begin
             write_counter <= write_counter + 1'b1;
             apb_task_C_start(`FIFO_WRITE_DATA, {{21{1'b0}}, write_counter}, 1'b1);
         end
