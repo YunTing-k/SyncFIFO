@@ -15,7 +15,7 @@
 // Description: 
 // DUT TB interface of source and dst agent
 // Dependencies:
-// .sv
+// N/A
 //
 // Revision:
 // ---------------------------------------------------------------------------------
@@ -25,6 +25,7 @@
 // ---------------------------------------------------------------------------------
 //
 //-FHDR//////////////////////////////////////////////////////////////////////////////
+`timescale 1ns/1ps
 
 interface duttb_intf_srcchannel(
     input clk,
@@ -46,6 +47,14 @@ interface duttb_intf_srcchannel(
     logic [SDATA_W - 1:0]  channel_prdata   ;
     logic                  channel_pready   ;
 // ---------------------------------------------------------------------------------
+// clocking block
+// ---------------------------------------------------------------------------------
+    clocking cb_src @(posedge clk);
+        default input #0ns output #0ns;
+        output channel_pwrite, channel_psel, channel_paddr, channel_pwdata, channel_penable;
+        input  channel_prdata, channel_pready;
+    endclocking
+// ---------------------------------------------------------------------------------
 // modports
 // ---------------------------------------------------------------------------------
     modport DUTconnect( // Interface => DUT
@@ -53,10 +62,11 @@ interface duttb_intf_srcchannel(
         output channel_prdata, channel_pready
     );
 
-    modport TBconnect( // Interface => TB
+    modport TBconnect(  // Interface => TB
         input  clk,
-        output channel_pwrite, channel_psel, channel_paddr, channel_pwdata, channel_penable,
-        input  channel_prdata, channel_pready
+        // output channel_pwrite, channel_psel, channel_paddr, channel_pwdata, channel_penable,
+        // input  channel_prdata, channel_pready
+        clocking cb_src
     );
 endinterface
 
@@ -79,6 +89,14 @@ interface duttb_intf_dstchannel(
     logic [DDATA_W - 1:0]   data_dst     ;
     logic                   ready_dst    ;
 // ---------------------------------------------------------------------------------
+// clocking block
+// ---------------------------------------------------------------------------------
+    clocking cb_dst @(posedge clk);
+        default input #0ns output #0ns;
+        output addr_dst, priority_dst, valid_dst;
+        input  data_dst, ready_dst;
+    endclocking
+// ---------------------------------------------------------------------------------
 // modports
 // ---------------------------------------------------------------------------------
     modport DUTconnect( // Interface => DUT
@@ -86,9 +104,10 @@ interface duttb_intf_dstchannel(
         output data_dst, ready_dst
     );
 
-    modport TBconnect( // Interface => TB
+    modport TBconnect(  // Interface => TB
         input  clk,
-        output addr_dst, priority_dst, valid_dst,
-        input  data_dst, ready_dst
+        // output addr_dst, priority_dst, valid_dst,
+        // input  data_dst, ready_dst
+        clocking cb_dst
     );
 endinterface

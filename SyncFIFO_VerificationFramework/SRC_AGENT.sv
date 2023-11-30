@@ -13,10 +13,10 @@
 // Testbench Design: SRC_AGENT
 // Tool versions: QuestaSim 10.6c
 // Description: 
-// APB's agent moudule for testbench of DUT. APB single Read/Write, continuous
-// Read/Write event define. APB write data randomize.
+// APB's agent moudule for testbench of DUT. APB single Read/Write event define.
+// APB write data randomize.
 // Dependencies:
-// .sv
+// N/A
 //
 // Revision:
 // ---------------------------------------------------------------------------------
@@ -26,6 +26,7 @@
 // ---------------------------------------------------------------------------------
 //
 //-FHDR//////////////////////////////////////////////////////////////////////////////
+`timescale 1ns/1ps
 `define FIFO_BASE_ADDR    32'h2000_0000                // base addr of FIFO device
 `define FIFO_WRITE_DATA   (`FIFO_BASE_ADDR + 32'h00)   // FIFO write data (read/write)
 `define FIFO_STATUS       (`FIFO_BASE_ADDR + 32'h04)   // FIFO status (read)
@@ -108,11 +109,16 @@ package src_agent_objects;
         );
             this.active_channel = source_ch; // set src class driver channel
             // port initialization to avoid 'x' state in dut
-            this.active_channel.channel_pwrite = 1'b0;
-            this.active_channel.channel_psel = 1'b0;
-            this.active_channel.channel_paddr = 32'h0000_0000;
-            this.active_channel.channel_pwdata = 32'h0000_0000;
-            this.active_channel.channel_penable = 1'b0;
+            // this.active_channel.channel_pwrite = 1'b0;
+            // this.active_channel.channel_psel = 1'b0;
+            // this.active_channel.channel_paddr = 32'h0000_0000;
+            // this.active_channel.channel_pwdata = 32'h0000_0000;
+            // this.active_channel.channel_penable = 1'b0;
+            this.active_channel.cb_src.channel_pwrite <= 1'b0;
+            this.active_channel.cb_src.channel_psel <= 1'b0;
+            this.active_channel.cb_src.channel_paddr <= 32'h0000_0000;
+            this.active_channel.cb_src.channel_pwdata <= 32'h0000_0000;
+            this.active_channel.cb_src.channel_penable <= 1'b0;
         endfunction
         
         // -------------------------------------------------------------------------
@@ -124,51 +130,82 @@ package src_agent_objects;
             this.gen2drv.get(random_data_get);
             // APB config
             @(posedge this.active_channel.clk)
-                this.active_channel.channel_pwrite = 1'b0;
-                this.active_channel.channel_psel = 1'b1;
-                this.active_channel.channel_paddr = random_data_get.addr;
-                this.active_channel.channel_pwdata = random_data_get.data;
-                this.active_channel.channel_penable = 1'b0;
+                // this.active_channel.channel_pwrite = 1'b0;
+                // this.active_channel.channel_psel = 1'b1;
+                // this.active_channel.channel_paddr = random_data_get.addr;
+                // this.active_channel.channel_pwdata = random_data_get.data;
+                // this.active_channel.channel_penable = 1'b0;
+                this.active_channel.cb_src.channel_pwrite <= 1'b0;
+                this.active_channel.cb_src.channel_psel <= 1'b1;
+                this.active_channel.cb_src.channel_paddr <= random_data_get.addr;
+                this.active_channel.cb_src.channel_pwdata <= random_data_get.data;
+                this.active_channel.cb_src.channel_penable <= 1'b0;
             // APB access
             @(posedge this.active_channel.clk)
-                this.active_channel.channel_penable = 1'b1;
+                // this.active_channel.channel_penable = 1'b1;
+                this.active_channel.cb_src.channel_penable <= 1'b1;
             // Wait for APB slave ready
-            wait(this.active_channel.channel_pready)
+            // wait(this.active_channel.channel_pready)
+            wait(this.active_channel.cb_src.channel_pready == 1'b1)
                 // to APB idle
                 @(posedge this.active_channel.clk)
-                    this.active_channel.channel_pwrite = 1'b0;
-                    this.active_channel.channel_psel = 1'b0;
-                    this.active_channel.channel_paddr = 32'h0000_0000;
-                    this.active_channel.channel_pwdata = 32'h0000_0000;
-                    this.active_channel.channel_penable = 1'b0;
+                    // this.active_channel.channel_pwrite = 1'b0;
+                    // this.active_channel.channel_psel = 1'b0;
+                    // this.active_channel.channel_paddr = 32'h0000_0000;
+                    // this.active_channel.channel_pwdata = 32'h0000_0000;
+                    // this.active_channel.channel_penable = 1'b0;
+                    this.active_channel.cb_src.channel_pwrite <= 1'b0;
+                    this.active_channel.cb_src.channel_psel <= 1'b0;
+                    this.active_channel.cb_src.channel_paddr <= 32'h0000_0000;
+                    this.active_channel.cb_src.channel_pwdata <= 32'h0000_0000;
+                    this.active_channel.cb_src.channel_penable <= 1'b0;
         endtask
 
         // -------------------------------------------------------------------------
         // [data_write]: APB write data handhsake
         // -------------------------------------------------------------------------
-        task data_write();
+        task data_write(
+            ref bit [31:0] data [8192],
+            ref bit [12:0] pushed_count
+        );
             // get data from mailbox to random_data_get
             src_randomgen_datapkg random_data_get;
             this.gen2drv.get(random_data_get);
             // APB config
             @(posedge this.active_channel.clk)
-                this.active_channel.channel_pwrite = 1'b1;
-                this.active_channel.channel_psel = 1'b1;
-                this.active_channel.channel_paddr = random_data_get.addr;
-                this.active_channel.channel_pwdata = random_data_get.data;
-                this.active_channel.channel_penable = 1'b0;
+                // this.active_channel.channel_pwrite = 1'b1;
+                // this.active_channel.channel_psel = 1'b1;
+                // this.active_channel.channel_paddr = random_data_get.addr;
+                // this.active_channel.channel_pwdata = random_data_get.data;
+                // this.active_channel.channel_penable = 1'b0;
+                this.active_channel.cb_src.channel_pwrite <= 1'b1;
+                this.active_channel.cb_src.channel_psel <= 1'b1;
+                this.active_channel.cb_src.channel_paddr <= random_data_get.addr;
+                this.active_channel.cb_src.channel_pwdata <= random_data_get.data;
+                this.active_channel.cb_src.channel_penable <= 1'b0;
             // APB access
             @(posedge this.active_channel.clk)
-                this.active_channel.channel_penable = 1'b1;
+                // this.active_channel.channel_penable = 1'b1;
+                this.active_channel.cb_src.channel_penable <= 1'b1;
             // Wait for APB slave ready
-            wait(this.active_channel.channel_pready)
+            // wait(this.active_channel.channel_pready)
+            wait(this.active_channel.cb_src.channel_pready == 1'b1)
+                data[pushed_count] = random_data_get.data;
+                pushed_count = pushed_count + 1'b1;
+                $display("[SRC AGENT] @%0d ns Data pushed into FIFO: %h, total pushed: %d ",
+                         $time, random_data_get.data, pushed_count);
                 // to APB idle
                 @(posedge this.active_channel.clk)
-                    this.active_channel.channel_pwrite = 1'b0;
-                    this.active_channel.channel_psel = 1'b0;
-                    this.active_channel.channel_paddr = 32'h0000_0000;
-                    this.active_channel.channel_pwdata = 32'h0000_0000;
-                    this.active_channel.channel_penable = 1'b0;
+                    // this.active_channel.channel_pwrite = 1'b0;
+                    // this.active_channel.channel_psel = 1'b0;
+                    // this.active_channel.channel_paddr = 32'h0000_0000;
+                    // this.active_channel.channel_pwdata = 32'h0000_0000;
+                    // this.active_channel.channel_penable = 1'b0;
+                    this.active_channel.cb_src.channel_pwrite <= 1'b0;
+                    this.active_channel.cb_src.channel_psel <= 1'b0;
+                    this.active_channel.cb_src.channel_paddr <= 32'h0000_0000;
+                    this.active_channel.cb_src.channel_pwdata <= 32'h0000_0000;
+                    this.active_channel.cb_src.channel_penable <= 1'b0;
         endtask
     endclass
 endpackage
@@ -180,11 +217,15 @@ package src_agent_main;
         // -------------------------------------------------------------------------
         // BUILD
         // -------------------------------------------------------------------------
+        bit [31:0] data [8192];
+        bit [12:0] pushed_count;
         src_generator                    src_generator;   // src generator instance
         mailbox #(src_randomgen_datapkg) mailbox_gen2drv; // mailbox of src agent
         src_driver                       src_driver;      // src driver instance
- 
+        bit err_wr_addr = 1'b1;                           // if inject error in write addr
+
         function new(); // constuctor of src agent
+            this.pushed_count = 13'd0;
             this.mailbox_gen2drv = new(16);               // create a 16 size mailbox
             this.src_generator   = new(mailbox_gen2drv);  // pass mailbox to data gen
             this.src_driver     = new(mailbox_gen2drv);   // pass mailbox to data drive
@@ -220,7 +261,7 @@ package src_agent_main;
                 // generate data
                 this.src_generator.data_gen(mode, random, addr, data);
                 // select and ask the driver to write the data
-                this.src_driver.data_write();
+                this.src_driver.data_write(this.data, this.pushed_count);
             end
         endtask
     endclass

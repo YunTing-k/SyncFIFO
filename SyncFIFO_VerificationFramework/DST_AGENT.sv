@@ -1,10 +1,7 @@
 //+FHDR//////////////////////////////////////////////////////////////////////////////
 // Company: Shanghai Jiao Tong University
-// Original Source: EST8703-039-M01 LAB2 DST_AGENT.sv
+// Original Source: EST8703-039-M01 LAB2 DST_AGENT.sv(empty file)
 // Engineer: Yu Huang
-// Copyright: (c) This file is originally from the course "SystemVerilog Circuit Design
-// and Verfication (EST8703-039-M01)" by Shanghai Jiao Tong University Prof. Jiang Jianfei.
-// The author partly modify the original source and resubmit it.
 //
 // Create Date: 2023.11.28
 // DUT Name: SyncFIFO
@@ -14,8 +11,9 @@
 // Tool versions: QuestaSim 10.6c
 // Description: 
 // Arbiter's agent moudule for testbench of DUT. Arbiter read with priority and addr.
+// And realiaztion of random access.
 // Dependencies:
-// .sv
+// N/A
 //
 // Revision:
 // ---------------------------------------------------------------------------------
@@ -25,6 +23,7 @@
 // ---------------------------------------------------------------------------------
 //
 //-FHDR//////////////////////////////////////////////////////////////////////////////
+`timescale 1ns/1ps
 `define FIFO_OUT_DATA       8'd0   // FIFO output data (read)
 `define DATA_ERR_IDX        8'd1   // FIFO data error index (read)
 `define WRITE_PTR           8'd2   // FIFO write pointer (read)
@@ -105,30 +104,50 @@ package dst_agent_objects;
         );
             this.active_channel = dst_ch; // set dst class driver channel
             // port initialization to avoid 'x' state in dut
-            this.active_channel.addr_dst = 8'd0;
-            this.active_channel.priority_dst = 8'd0;
-            this.active_channel.valid_dst = 1'b0;
+            // this.active_channel.addr_dst = 8'd0;
+            // this.active_channel.priority_dst = 8'd0;
+            // this.active_channel.valid_dst = 1'b0;
+            this.active_channel.cb_dst.addr_dst <= 8'd0;
+            this.active_channel.cb_dst.priority_dst <= 8'd0;
+            this.active_channel.cb_dst.valid_dst <= 1'b0;
         endfunction
         
         // -------------------------------------------------------------------------
         // [data_read]: Arbiter read data handhsake
         // -------------------------------------------------------------------------
-        task data_read();
+        task data_read(
+            input [2:0] channel,
+            ref bit [31:0] data [8192],
+            ref bit [12:0] popped_count
+            );
             // get data from mailbox to random_data_get
             dst_randomgen_datapkg random_data_get;
             this.gen2drv.get(random_data_get);
             // Arbiter config
             @(posedge this.active_channel.clk)
-                this.active_channel.addr_dst = random_data_get.addr;
-                this.active_channel.priority_dst = random_data_get.ch_priority;
-                this.active_channel.valid_dst = 1'b1;
+                // this.active_channel.addr_dst = random_data_get.addr;
+                // this.active_channel.priority_dst = random_data_get.ch_priority;
+                // this.active_channel.valid_dst = 1'b1;
+                this.active_channel.cb_dst.addr_dst <= random_data_get.addr;
+                this.active_channel.cb_dst.priority_dst <= random_data_get.ch_priority;
+                this.active_channel.cb_dst.valid_dst <= 1'b1;
             // Wait for Arbiter slave ready
-            wait(this.active_channel.ready_dst)
+            // wait(this.active_channel.ready_dst)
+            wait(this.active_channel.cb_dst.ready_dst == 1'b1)
+                if (random_data_get.addr == `FIFO_OUT_DATA) begin
+                    data[popped_count] = active_channel.cb_dst.data_dst;
+                    popped_count = popped_count + 1'b1;
+                    $display("[DST AGENT] @%0d ns Data popped in ch-[%d] from FIFO: %h, total popped: %d",
+                             $time, channel, this.active_channel.cb_dst.data_dst, popped_count);
+                end
                 // to Arbiter idle
                 @(posedge this.active_channel.clk)
-                    this.active_channel.addr_dst = 8'd0;
-                    this.active_channel.priority_dst = 8'd0;
-                    this.active_channel.valid_dst = 1'b0;
+                    // this.active_channel.addr_dst = 8'd0;
+                    // this.active_channel.priority_dst = 8'd0;
+                    // this.active_channel.valid_dst = 1'b0;
+                    this.active_channel.cb_dst.addr_dst <= 8'd0;
+                    this.active_channel.cb_dst.priority_dst <= 8'd0;
+                    this.active_channel.cb_dst.valid_dst <= 1'b0;
         endtask
     endclass
 endpackage
@@ -140,13 +159,18 @@ package dst_agent_main;
         // -------------------------------------------------------------------------
         // BUILD
         // -------------------------------------------------------------------------
+        bit [31:0] data [8192];
+        bit [12:0] popped_count;
         dst_generator                    dst_generator;   // dst generator instance
         mailbox #(dst_randomgen_datapkg) mailbox_gen2drv; // mailbox of dst agent
         dst_driver                       dst_driver[8];   // dst driver instance
- 
+        bit err_rd_data = 1'b1;                           // if inject error in FIFO readout data
+        bit err_rd_addr = 1'b1;                           // if inject error in read addr
+
         function new(); // constuctor of dst agent
-            this.mailbox_gen2drv = new(16);               // create a 16 size mailbox
-            this.dst_generator   = new(mailbox_gen2drv);  // pass mailbox to data gen
+            this.popped_count = 13'd0;
+            this.mailbox_gen2drv = new(16);                  // create a 16 size mailbox
+            this.dst_generator   = new(mailbox_gen2drv);     // pass mailbox to data gen
             this.dst_driver[0]      = new(mailbox_gen2drv);  // pass mailbox to data drive[0]
             this.dst_driver[1]      = new(mailbox_gen2drv);  // pass mailbox to data drive[1]
             this.dst_driver[2]      = new(mailbox_gen2drv);  // pass mailbox to data drive[2]
@@ -195,7 +219,7 @@ package dst_agent_main;
             // generate data
             this.dst_generator.data_gen(random_addr, random_priority, ch_priority, addr);
             // select and ask the driver to read the data
-            this.dst_driver[channel].data_read();
+            this.dst_driver[channel].data_read(channel, this.data, this.popped_count);
         endtask
     endclass
 endpackage

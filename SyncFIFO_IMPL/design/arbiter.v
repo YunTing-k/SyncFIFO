@@ -19,6 +19,7 @@
 // ---------------------------------------------------------------------------------
 // 2023/11/03     Yu Huang     1.0               First implmentation
 // 2023/11/15     Yu Huang     1.1               Support of 0-priority arbitration
+// 2023/11/29     Yu Huang     1.2               Add busy signal to avoid race
 // ---------------------------------------------------------------------------------
 //
 //-FHDR//////////////////////////////////////////////////////////////////////////////
@@ -83,6 +84,8 @@ module arbiter
 
 wire [7:0] sel;
 wire [8:0] priority0, priority1, priority2, priority3, priority4, priority5, priority6, priority7;
+wire arbiter_busy;
+wire block_dst0, block_dst1, block_dst2, block_dst3, block_dst4, block_dst5, block_dst6, block_dst7;
 wire rd_en0, rd_en1, rd_en2, rd_en3, rd_en4, rd_en5, rd_en6, rd_en7;
 wire rd_only0, rd_only1, rd_only2, rd_only3, rd_only4, rd_only5, rd_only6, rd_only7;
 
@@ -102,6 +105,7 @@ read_channel #(.ADDR(ADDR), .ERRPTR(ERRPTR), .WIDTH(WIDTH), .ERRDATA(ERRDATA))
 channel0(
     .clk             (clk),               // clock
     .rst_n           (rst_n),             // reset signal active low
+    .busy            (arbiter_busy),      // busy signal of arbiter
     .sel             (sel[0]),            // select signal derived by the priority
     .valid_cfg       (valid_dst0),        // [config] valid signal of channel handshake
     .priority_cfg    (priority_dst0),     // [config] priority of channel handshake
@@ -114,6 +118,7 @@ channel0(
     .rd_ptr_err_idx  (rd_ptr_err_idx),    // read pointer error index,  [addr = 5]
     .priority        (priority0),         // [configured priority in reg]
     .data            (data_dst0),         // [readout data]
+    .block           (block_dst0),        // block signal for arbiter
     .rd_en           (rd_en0),            // [read enable signal]
     .rd_only         (rd_only0),          // [read only signal]
     .ready           (ready_dst0)         // [ready signal for valid-ready handshake]
@@ -123,6 +128,7 @@ read_channel #(.ADDR(ADDR), .ERRPTR(ERRPTR), .WIDTH(WIDTH), .ERRDATA(ERRDATA))
 channel1(
     .clk             (clk),               // clock
     .rst_n           (rst_n),             // reset signal active low
+    .busy            (arbiter_busy),      // busy signal of arbiter
     .sel             (sel[1]),            // select signal derived by the priority
     .valid_cfg       (valid_dst1),        // [config] valid signal of channel handshake
     .priority_cfg    (priority_dst1),     // [config] priority of channel handshake
@@ -135,6 +141,7 @@ channel1(
     .rd_ptr_err_idx  (rd_ptr_err_idx),    // read pointer error index,  [addr = 5]
     .priority        (priority1),         // [configured priority in reg]
     .data            (data_dst1),         // [readout data]
+    .block           (block_dst1),        // block signal for arbiter
     .rd_en           (rd_en1),            // [read enable signal]
     .rd_only         (rd_only1),          // [read only signal]
     .ready           (ready_dst1)         // [ready signal for valid-ready handshake]
@@ -144,6 +151,7 @@ read_channel #(.ADDR(ADDR), .ERRPTR(ERRPTR), .WIDTH(WIDTH), .ERRDATA(ERRDATA))
 channel2(
     .clk             (clk),               // clock
     .rst_n           (rst_n),             // reset signal active low
+    .busy            (arbiter_busy),      // busy signal of arbiter
     .sel             (sel[2]),            // select signal derived by the priority
     .valid_cfg       (valid_dst2),        // [config] valid signal of channel handshake
     .priority_cfg    (priority_dst2),     // [config] priority of channel handshake
@@ -156,6 +164,7 @@ channel2(
     .rd_ptr_err_idx  (rd_ptr_err_idx),    // read pointer error index,  [addr = 5]
     .priority        (priority2),         // [configured priority in reg]
     .data            (data_dst2),         // [readout data]
+    .block           (block_dst2),        // block signal for arbiter
     .rd_en           (rd_en2),            // [read enable signal]
     .rd_only         (rd_only2),          // [read only signal]
     .ready           (ready_dst2)         // [ready signal for valid-ready handshake]
@@ -165,6 +174,7 @@ read_channel #(.ADDR(ADDR), .ERRPTR(ERRPTR), .WIDTH(WIDTH), .ERRDATA(ERRDATA))
 channel3(
     .clk             (clk),               // clock
     .rst_n           (rst_n),             // reset signal active low
+    .busy            (arbiter_busy),      // busy signal of arbiter
     .sel             (sel[3]),            // select signal derived by the priority
     .valid_cfg       (valid_dst3),        // [config] valid signal of channel handshake
     .priority_cfg    (priority_dst3),     // [config] priority of channel handshake
@@ -177,6 +187,7 @@ channel3(
     .rd_ptr_err_idx  (rd_ptr_err_idx),    // read pointer error index,  [addr = 5]
     .priority        (priority3),         // [configured priority in reg]
     .data            (data_dst3),         // [readout data]
+    .block           (block_dst3),        // block signal for arbiter
     .rd_en           (rd_en3),            // [read enable signal]
     .rd_only         (rd_only3),          // [read only signal]
     .ready           (ready_dst3)         // [ready signal for valid-ready handshake]
@@ -186,6 +197,7 @@ read_channel #(.ADDR(ADDR), .ERRPTR(ERRPTR), .WIDTH(WIDTH), .ERRDATA(ERRDATA))
 channel4(
     .clk             (clk),               // clock
     .rst_n           (rst_n),             // reset signal active low
+    .busy            (arbiter_busy),      // busy signal of arbiter
     .sel             (sel[4]),            // select signal derived by the priority
     .valid_cfg       (valid_dst4),        // [config] valid signal of channel handshake
     .priority_cfg    (priority_dst4),     // [config] priority of channel handshake
@@ -198,6 +210,7 @@ channel4(
     .rd_ptr_err_idx  (rd_ptr_err_idx),    // read pointer error index,  [addr = 5]
     .priority        (priority4),         // [configured priority in reg]
     .data            (data_dst4),         // [readout data]
+    .block           (block_dst4),        // block signal for arbiter
     .rd_en           (rd_en4),            // [read enable signal]
     .rd_only         (rd_only4),          // [read only signal]
     .ready           (ready_dst4)         // [ready signal for valid-ready handshake]
@@ -207,6 +220,7 @@ read_channel #(.ADDR(ADDR), .ERRPTR(ERRPTR), .WIDTH(WIDTH), .ERRDATA(ERRDATA))
 channel5(
     .clk             (clk),               // clock
     .rst_n           (rst_n),             // reset signal active low
+    .busy            (arbiter_busy),      // busy signal of arbiter
     .sel             (sel[5]),            // select signal derived by the priority
     .valid_cfg       (valid_dst5),        // [config] valid signal of channel handshake
     .priority_cfg    (priority_dst5),     // [config] priority of channel handshake
@@ -219,6 +233,7 @@ channel5(
     .rd_ptr_err_idx  (rd_ptr_err_idx),    // read pointer error index,  [addr = 5]
     .priority        (priority5),         // [configured priority in reg]
     .data            (data_dst5),         // [readout data]
+    .block           (block_dst5),        // block signal for arbiter
     .rd_en           (rd_en5),            // [read enable signal]
     .rd_only         (rd_only5),          // [read only signal]
     .ready           (ready_dst5)         // [ready signal for valid-ready handshake]
@@ -228,6 +243,7 @@ read_channel #(.ADDR(ADDR), .ERRPTR(ERRPTR), .WIDTH(WIDTH), .ERRDATA(ERRDATA))
 channel6(
     .clk             (clk),               // clock
     .rst_n           (rst_n),             // reset signal active low
+    .busy            (arbiter_busy),      // busy signal of arbiter
     .sel             (sel[6]),            // select signal derived by the priority
     .valid_cfg       (valid_dst6),        // [config] valid signal of channel handshake
     .priority_cfg    (priority_dst6),     // [config] priority of channel handshake
@@ -240,6 +256,7 @@ channel6(
     .rd_ptr_err_idx  (rd_ptr_err_idx),    // read pointer error index,  [addr = 5]
     .priority        (priority6),         // [configured priority in reg]
     .data            (data_dst6),         // [readout data]
+    .block           (block_dst6),        // block signal for arbiter
     .rd_en           (rd_en6),            // [read enable signal]
     .rd_only         (rd_only6),          // [read only signal]
     .ready           (ready_dst6)         // [ready signal for valid-ready handshake]
@@ -249,6 +266,7 @@ read_channel #(.ADDR(ADDR), .ERRPTR(ERRPTR), .WIDTH(WIDTH), .ERRDATA(ERRDATA))
 channel7(
     .clk             (clk),               // clock
     .rst_n           (rst_n),             // reset signal active low
+    .busy            (arbiter_busy),      // busy signal of arbiter
     .sel             (sel[7]),            // select signal derived by the priority
     .valid_cfg       (valid_dst7),        // [config] valid signal of channel handshake
     .priority_cfg    (priority_dst7),     // [config] priority of channel handshake
@@ -261,29 +279,39 @@ channel7(
     .rd_ptr_err_idx  (rd_ptr_err_idx),    // read pointer error index,  [addr = 5]
     .priority        (priority7),         // [configured priority in reg]
     .data            (data_dst7),         // [readout data]
+    .block           (block_dst7),        // block signal for arbiter
     .rd_en           (rd_en7),            // [read enable signal]
     .rd_only         (rd_only7),          // [read only signal]
     .ready           (ready_dst7)         // [ready signal for valid-ready handshake]
 );
 
 fifo_read fifo_read_inst(
+    .block0     (block_dst0),              // block signal channel0
     .rd_en0     (rd_en0),                  // read enable channel0
     .rd_only0   (rd_only0),                // read only channel0
+    .block1     (block_dst1),              // block signal channel1
     .rd_en1     (rd_en1),                  // read enable channel1
     .rd_only1   (rd_only1),                // read only channel1
+    .block2     (block_dst2),              // block signal channel2
     .rd_en2     (rd_en2),                  // read enable channel2
     .rd_only2   (rd_only2),                // read only channel2
+    .block3     (block_dst3),              // block signal channel3
     .rd_en3     (rd_en3),                  // read enable channel3
     .rd_only3   (rd_only3),                // read only channel3
+    .block4     (block_dst4),              // block signal channel4
     .rd_en4     (rd_en4),                  // read enable channel4
     .rd_only4   (rd_only4),                // read only channel4
+    .block5     (block_dst5),              // block signal channel5
     .rd_en5     (rd_en5),                  // read enable channel5
     .rd_only5   (rd_only5),                // read only channel5
+    .block6     (block_dst6),              // block signal channel6
     .rd_en6     (rd_en6),                  // read enable channel6
     .rd_only6   (rd_only6),                // read only channel6
+    .block7     (block_dst7),              // block signal channel7
     .rd_en7     (rd_en7),                  // read enable channel7
     .rd_only7   (rd_only7),                // read only channel7
     .select     (sel),                     // select signal
+    .busy       (arbiter_busy),            // busy signal
     .rd_en      (rd_en),                   // read enable signal
     .rd_only    (rd_only)                  // read only signal
 );

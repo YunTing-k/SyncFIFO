@@ -13,10 +13,10 @@
 // Testbench Design: TESTBENCH
 // Tool versions: QuestaSim 10.6c
 // Description: 
-// Build the instance of the module of dut and program of testbench, even the  intreface
+// Build the instance of the module of dut and program of testbench, the intreface
 // and some global signals. 'TESTBENCH' file control the total sim process.
 // Dependencies:
-// .sv
+// ENV.sv
 //
 // Revision:
 // ---------------------------------------------------------------------------------
@@ -52,16 +52,16 @@ module testbench_top ();
 // ---------------------------------------------------------------------------------
 // clk and rst_n gen
 // ---------------------------------------------------------------------------------
-	initial begin 
-		clk    = 0 ;
-		forever #(CLK_PERIOD /2) clk = ~clk;
-	end
+    initial begin 
+        clk    = 0 ;
+        forever #(CLK_PERIOD /2) clk = ~clk;
+    end
 
-	initial begin
-		rst_n   = 0;
-		repeat(10) @(posedge clk) ;
-		rst_n   = 1;
-	end 
+    initial begin
+        rst_n   = 0;
+        repeat(10) @(posedge clk) ;
+        rst_n   = 1;
+    end
 // ---------------------------------------------------------------------------------
 // connections
 // ---------------------------------------------------------------------------------
@@ -114,14 +114,20 @@ program testbench(
     duttb_intf_dstchannel.TBconnect dst_7
 );
 
-    import env ::*;   // impport your ENV object
-    env_ctrl envctrl; // first declare it
+    import env ::*;               // impport ENV object
+    env_ctrl envctrl;             // declare the class
+    bit [13:0] wr_addr_temp;      // temp val of the write addr
+    bit [3:0] wr_addr_flip_index; // flip index of the write addr
+    bit [13:0] rd_addr_temp;      // temp val of the read addr
+    bit [3:0] rd_addr_flip_index; // flip index of the read addr
+    bit [37:0] data_temp;         // temp val of the FIFO readout data
+    bit [5:0] data_flip_index;    // flip index of the FIFO readout data
 
     initial begin
         $display("[TB-SYS] welcome to sv testbench plateform !");
         // -------------------------------------------------------------------------
         // BUILD
-        // -------------------------------------------------------------------------        
+        // -------------------------------------------------------------------------
         $display("[TB-SYS] building");
         envctrl = new();
         // -------------------------------------------------------------------------
@@ -133,16 +139,84 @@ program testbench(
         // RUN
         // -------------------------------------------------------------------------
         $display("[TB-SYS] running");
+
         repeat(11) @(posedge clk);
-            fork
-                envctrl.run("Apb_Write/Read");
-                envctrl.run("Time_Run");
-            join_any
-            disable fork;
+        fork
+            // envctrl.run("APB IO Random Access");
+            // envctrl.run("Arbiter Read Single");
+            // envctrl.run("Arbiter Read Simultaneous");
+            // envctrl.run("Arbiter Read Race");
+            // envctrl.run("Arbiter Random Access");
+            envctrl.run("Random APB/Arbiter Access");
+            // envctrl.run("Error Injection");
+            envctrl.run("Time Out");
+        join_any
+        disable fork;
+        // -------------------------------------------------------------------------
+        // VALID THE DATA INTEGRITY
+        // -------------------------------------------------------------------------
+        envctrl.integrity_valid();
         // -------------------------------------------------------------------------
         // END
         // -------------------------------------------------------------------------
         $display("[TB-SYS] testbench system has done all the work, exit !");
         $stop;
+    end
+
+    initial begin
+        if (envctrl.src_agent.err_wr_addr == 1'b1)
+            $display("[TB-SYS] error injection of write pointer");
+        forever @(posedge dut.top_wrapper.fifo_wrapper_inst.fifo_ctrl_inst.wr_en) begin
+            // trigger at the posedge of wr_en
+            wr_addr_flip_index = $urandom() % 14;
+            wr_addr_temp = dut.top_wrapper.fifo_wrapper_inst.ptr_encode_instB.enc_data;
+            wr_addr_temp[wr_addr_flip_index] = ~wr_addr_temp[wr_addr_flip_index];
+            if ((envctrl.src_agent.err_wr_addr == 1'b1) && ($urandom() % 2 == 1'b1)) begin
+                // inject error during source request (write pointer)
+                force dut.top_wrapper.fifo_wrapper_inst.ptr_encode_instB.enc_data = wr_addr_temp;
+                @(negedge dut.top_wrapper.fifo_wrapper_inst.fifo_ctrl_inst.wr_en) begin
+                // release at negedge
+                release dut.top_wrapper.fifo_wrapper_inst.ptr_encode_instB.enc_data;
+                end
+            end
+        end
+    end
+
+    initial begin
+        if (envctrl.dst_agent.err_rd_addr == 1'b1)
+            $display("[TB-SYS] error injection of read pointer");
+        forever @(posedge dut.top_wrapper.fifo_wrapper_inst.fifo_ctrl_inst.rd_en) begin
+            // trigger at the posedge of rd_en
+            rd_addr_flip_index = $urandom() % 14;
+            rd_addr_temp = dut.top_wrapper.fifo_wrapper_inst.ptr_encode_instA.enc_data;
+            rd_addr_temp[rd_addr_flip_index] = ~rd_addr_temp[rd_addr_flip_index];
+            if ((envctrl.dst_agent.err_rd_addr == 1'b1) && ($urandom() % 2 == 1'b1)) begin
+                // inject error during dst request (read pointer)
+                force dut.top_wrapper.fifo_wrapper_inst.ptr_encode_instA.enc_data = rd_addr_temp;
+                @(negedge dut.top_wrapper.fifo_wrapper_inst.fifo_ctrl_inst.rd_en) begin
+                // release at negedge
+                release dut.top_wrapper.fifo_wrapper_inst.ptr_encode_instA.enc_data;
+                end
+            end
+        end
+    end
+
+    initial begin
+        if (envctrl.dst_agent.err_rd_data == 1'b1)
+            $display("[TB-SYS] error injection of FIFO readout data");
+        forever @(negedge dut.top_wrapper.fifo_wrapper_inst.fifo_ctrl_inst.rd_en) begin
+            // trigger at thr negedge of rd_en
+            data_flip_index = $urandom() % 38;
+            data_temp = dut.top_wrapper.fifo_wrapper_inst.data_decode_inst.enc_data;
+            data_temp[data_flip_index] = ~data_temp[data_flip_index];
+            if ((envctrl.dst_agent.err_rd_data == 1'b1) && ($urandom() % 2 == 1'b1)) begin
+                // inject error during dst request (FIFO readout data)
+                force dut.top_wrapper.fifo_wrapper_inst.data_decode_inst.enc_data = data_temp;
+                @ (posedge dut.top_wrapper.fifo_wrapper_inst.fifo_ctrl_inst.rd_en) begin
+                    // release at posedge
+                    release dut.top_wrapper.fifo_wrapper_inst.data_decode_inst.enc_data;
+                end
+            end
+        end
     end
 endprogram
