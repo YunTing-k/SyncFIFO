@@ -13,7 +13,8 @@
 // Testbench Design: ENV
 // Tool versions: QuestaSim 10.6c
 // Description: 
-// Environment of the testbench, src agent and dst agent buiding and interface connection
+// Environment of the testbench, src agent and dst agent buiding and interface connection,
+// data integrity validation scoreboard, simulation event contol.
 // Dependencies:
 // SRC_AGENT.sv, DST_AGENT.sv
 //
@@ -61,7 +62,7 @@ package env;
             pop_count = this.dst_agent.popped_count;
             $display("[ENV] FIFO data total pushed: %0d, total popped: %0d", push_count, pop_count);
             if (pop_count > push_count) begin
-                $display("[ENV] Exist attemp to pop an emoty FIFO!");
+                $display("[ENV] Exist attempt to pop an empty FIFO!");
             end
             else begin
                 correct_count = 0;
@@ -73,10 +74,10 @@ package env;
                 $display("[ENV] %0d elements checked, %0d passed with %0d failed, ratio = %4f %%",
                          pop_count, correct_count, (pop_count - correct_count), 100 * (correct_count / pop_count));
                 if (correct_count == pop_count) begin
-                    $display("[ENV] Data intergrity validation PASSED!");
+                    $display("[ENV] Data integrity validation PASSED!");
                 end
                 else begin
-                    $display("[ENV] Data intergrity validation FAILED!");
+                    $display("[ENV] Data integrity validation FAILED!");
                 end
             end
         endfunction
@@ -104,6 +105,16 @@ package env;
         // -------------------------------------------------------------------------
         task run(string state);
             case(state)
+                "APB Single Write": begin
+                    // apb io test for reg of write data and fifo status, random read and random write
+                    $display("[ENV] start work : APB Single Write!");
+                    for (int i = 0;i < 1024;i++)begin // fill the fifo
+                        src_agent.single_tran(1, 0, `FIFO_WRITE_DATA, i + 1);
+                    end
+                    // FIFO full write test
+                    src_agent.single_tran(1, 0, `FIFO_WRITE_DATA, 32'hFFFF_FFFF);
+                    $display("[ENV] finish work : APB Single Write!");
+                end
                 "APB IO Random Access": begin
                     // apb io test for reg of write data and fifo status, random read and random write
                     $display("[ENV] start work : APB IO Random Access!");
@@ -218,7 +229,7 @@ package env;
                     for (int i = 0;i < 512;i++)begin // fill the half of the fifo
                         src_agent.single_tran(1, 0, `FIFO_WRITE_DATA, i + 1);
                     end
-                    for (int i = 0;i < 128;i++)begin
+                    for (int i = 0;i < 1024;i++)begin
                         // fifo random access and arbiter random access
                         fork
                             begin 

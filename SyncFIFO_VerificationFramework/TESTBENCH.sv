@@ -14,7 +14,8 @@
 // Tool versions: QuestaSim 10.6c
 // Description: 
 // Build the instance of the module of dut and program of testbench, the intreface
-// and some global signals. 'TESTBENCH' file control the total sim process.
+// and some global signals. 'TESTBENCH' file control the total sim process. Simulation
+// event control and error injection.
 // Dependencies:
 // ENV.sv
 //
@@ -142,13 +143,14 @@ program testbench(
 
         repeat(11) @(posedge clk);
         fork
+            // envctrl.run("APB Single Write");
             // envctrl.run("APB IO Random Access");
             // envctrl.run("Arbiter Read Single");
             // envctrl.run("Arbiter Read Simultaneous");
             // envctrl.run("Arbiter Read Race");
             // envctrl.run("Arbiter Random Access");
-            envctrl.run("Random APB/Arbiter Access");
-            // envctrl.run("Error Injection");
+            // envctrl.run("Random APB/Arbiter Access");
+            envctrl.run("Error Injection");
             envctrl.run("Time Out");
         join_any
         disable fork;

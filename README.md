@@ -3,5 +3,6 @@
 
 This is a sync FIFO with hanming code error dectecion and correction, 8-channel dynamic priority readout arbiter, APB3 control, which is a complete flow from HDL design to systemverilog verification. With this project, a complete flow is helpful to have a better understanding to IC front-end design. This project is the LAB of the course "SystemVerilog-Circuit Design and Verification" from Shanghai Jiao Tong University, Prof. Jiang Jianfei. More details please see the documents in DOC folder.
 
-![FIFO Architecture](https://github.com/YunTing-k/SyncFIFO/blob/master/DOC/img/img1.png?raw=true)
+![Sync FIFO Architecture](https://github.com/YunTing-k/SyncFIFO/blob/master/DOC/img/img1.png?raw=true)
 
+![SystemVerilog Verification Architecture](https://github.com/YunTing-k/SyncFIFO/blob/master/DOC/img/img2.png?raw=true)

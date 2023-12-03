@@ -96,13 +96,6 @@ QuestaSim-64 vlog 10.6c Compiler 2017.07 Jul 26 2017
 Top level modules:
 	--none--
 
-} {} {}} C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/data_encode.v {1 {vlog -work work -vopt -stats=none C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/data_encode.v
-QuestaSim-64 vlog 10.6c Compiler 2017.07 Jul 26 2017
--- Compiling module data_encode
-
-Top level modules:
-	data_encode
-
 } {} {}} C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/fifo_read.v {1 {vlog -work work -vopt -stats=none C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/fifo_read.v
 QuestaSim-64 vlog 10.6c Compiler 2017.07 Jul 26 2017
 -- Compiling module fifo_read
@@ -110,12 +103,12 @@ QuestaSim-64 vlog 10.6c Compiler 2017.07 Jul 26 2017
 Top level modules:
 	fifo_read
 
-} {} {}} C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/arbiter.v {1 {vlog -work work -vopt -stats=none C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/arbiter.v
+} {} {}} C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/data_encode.v {1 {vlog -work work -vopt -stats=none C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/data_encode.v
 QuestaSim-64 vlog 10.6c Compiler 2017.07 Jul 26 2017
--- Compiling module arbiter
+-- Compiling module data_encode
 
 Top level modules:
-	arbiter
+	data_encode
 
 } {} {}} C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_VerificationFramework/TESTBENCH.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_VerificationFramework/TESTBENCH.sv
 QuestaSim-64 vlog 10.6c Compiler 2017.07 Jul 26 2017
@@ -129,6 +122,13 @@ QuestaSim-64 vlog 10.6c Compiler 2017.07 Jul 26 2017
 
 Top level modules:
 	testbench_top
+
+} {} {}} C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/arbiter.v {1 {vlog -work work -vopt -stats=none C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/arbiter.v
+QuestaSim-64 vlog 10.6c Compiler 2017.07 Jul 26 2017
+-- Compiling module arbiter
+
+Top level modules:
+	arbiter
 
 } {} {}} C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_VerificationFramework/DST_AGENT.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_VerificationFramework/DST_AGENT.sv
 QuestaSim-64 vlog 10.6c Compiler 2017.07 Jul 26 2017

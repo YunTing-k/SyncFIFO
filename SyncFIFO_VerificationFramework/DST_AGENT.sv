@@ -11,7 +11,7 @@
 // Tool versions: QuestaSim 10.6c
 // Description: 
 // Arbiter's agent moudule for testbench of DUT. Arbiter read with priority and addr.
-// And realiaztion of random access.
+// And realiaztion of random access and monitor.
 // Dependencies:
 // N/A
 //

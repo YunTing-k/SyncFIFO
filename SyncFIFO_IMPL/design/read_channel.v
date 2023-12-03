@@ -18,7 +18,11 @@
 // make sure that the fifo get the exact config of this channel. Since the channel's
 // output has no thing to do with sel, once the correct config is send to fifo, we can
 // always get the correct data from it. Meanwhile, any attempt to read an empty fifo
-// will turn to read out the last data poped out of fifo.
+// will turn to read out the next fifo data. A block and busy signal is added to 
+// further avoid the race, when this channel's priority is configured, if arbiter is 
+// busy, configuration will not be done untill the arbiter not busy. After the channel's
+// priority is configured, this channel will send block signal to arbiter to set the 
+//arbiter to busy state, block signal will be low untill the control signal is outtputted.
 // Dependencies:
 // N/A
 //

@@ -14,7 +14,7 @@
 // Tool versions: QuestaSim 10.6c
 // Description: 
 // APB's agent moudule for testbench of DUT. APB single Read/Write event define.
-// APB write data randomize.
+// APB write data randomize and monitor.
 // Dependencies:
 // N/A
 //
