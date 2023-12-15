@@ -214,18 +214,31 @@ endmodule
 // ---------------------------------------------------------------------------------
 // APB slave assertion defination, assertion properties:
 // ---------------------------------------------------------------------------------
-// [1]: 
+// [1]:  after psel set high, paddr shouldn't be X
+// [2]:  after psel set high, paddr shouldn't be out of access range
+// [3]:  paddr should be stable when APB slave in SETUP state
+// [4]:  paddr should be stable until next transmission
+// [5]:  after psel rises, penable must rose in next cycle
+// [6]:  when pready dosen't rise, penable should be stable after it rises
+// [7]:  penable must fall in next cycle when ready is high
+// [8]:  psel must be stable until the pready rises
+// [9]:  when before access, pwdata should be stable
+// [10]: pwdata should be stable until the next trans
+// [11]: pwrite must be stable until the pready rises
+// [12]: prdata must be stable until the next transmission
+// [13]: pready must fall with psel
+// [14]: pready must fall with penable
 // ---------------------------------------------------------------------------------
 module apb_assertion(
     input clk,
     input rst_n,
-    input pwrite,       // APB write signal
-    input psel,         // APB select signal
-    input [31:0] paddr, // APB address data
-    input [31:0] pwdata,// APB write data
-    input penable,      // APB enable data
-    input [31:0] prdata,// APB read out data
-    input pready        // APB ready signal
+    input pwrite,         // APB write signal
+    input psel,           // APB select signal
+    input [31:0] paddr,   // APB address data
+    input [31:0] pwdata,  // APB write data
+    input penable,        // APB enable data
+    input [31:0] prdata,  // APB read out data
+    input pready          // APB ready signal
 );
 //PADDR ASSERTION
     property _paddr_no_x_psel_high;
@@ -246,6 +259,7 @@ module apb_assertion(
     property _paddr_stable_until_next_trans;
         // paddr should be stable until next transmission
         logic[31:0] addr1, addr2;
+        // avoid multiple matched sequences (multiple addr1 and addr2 that may not in a nearby request)
         @(posedge clk) first_match(($rose(penable),addr1=paddr) ##[1:$] ((psel && !penable),addr2=$past(paddr))) |-> addr1 == addr2;
     endproperty
 
@@ -266,7 +280,7 @@ paddr_stable_until_next_trans: assert property(_paddr_stable_until_next_trans) e
     endproperty
 
     property _penable_instant_fall;
-        // penable must fall one cycle after it rises
+        // penable must fall in next cycle when ready is high
         @(posedge clk) (penable && pready) |=> $fell(penable);
     endproperty
 
@@ -291,6 +305,7 @@ psel_stable: assert property(_psel_stable) else $error($stime,"\t\t Check psel s
     property _pwdata_stable_until_next_trans;
         // pwdata should be stable until the next trans
         logic[31:0] data1, data2;
+        // avoid multiple matched sequences (multiple data1 and data2 that may not in a nearby request)
         @(posedge clk) first_match(($rose(psel),data1=pwdata) ##[1:$] ((psel && !penable),data2=$past(pwdata))) |-> data1 == data2;
     endproperty
 
@@ -298,17 +313,28 @@ pwdata_stable_in_trans: assert property(_pwdata_stable_in_trans) else $error($st
 pwdata_stable_until_next_trans: assert property(_pwdata_stable_until_next_trans) else $error($stime,"\t\t Check pwdata stable until next transmission FAILED!\n");
 
 //PWRITE ASSERTION
-    property _pwrite_stable;
+    property _pwrite_stable_A;
         // pwrite must be stable until the pready rises
-        @(posedge clk) (!pready && psel && !$rose(pwrite)) |-> $stable(pwrite);
+        @(posedge clk) (!pready && psel) |=> $stable(pwrite);
     endproperty
 
-pwrite_stable: assert property(_pwrite_stable) else $error($stime,"\t\t Check pwrite stable FAILED!\n");
+    property _pwrite_stable_B;
+        // pwrite must be stable until the pready rises
+        @(posedge clk) (!pready && psel) |-> first_match(($rose(pwrite)) ##[1:$] pwrite);
+    endproperty
+
+    property _pwrite_stable_C;
+        // pwrite must be stable until the pready rises
+        @(posedge clk) (!pready && psel) |-> first_match((!pwrite) ##[1:$] !pwrite);
+    endproperty
+
+pwrite_stable: assert property(_pwrite_stable_A and (_pwrite_stable_B or _pwrite_stable_C)) else $error($stime,"\t\t Check pwrite stable FAILED!\n");
 
 //PRDATA ASSERTION
     property _prdata_stable_until_next_trans;
         // prdata must be stable until the next transmission
         logic[31:0] data1, data2;
+        // avoid multiple matched sequences (multiple data1 and data2 that may not in a nearby request)
         @(posedge clk) first_match(($rose(pready) && !pwrite, data1=prdata) ##[1:$] ((psel && !penable),data2=$past(prdata))) |-> data1 == data2;
     endproperty
 
@@ -353,6 +379,7 @@ module dut_fifo_assertion
 );
     property _rd_addr_stable_empty;
         logic[ADDR - 1:0] addr1, addr2;
+        // avoid multiple matched sequences (multiple addr1 and addr2 that may not in a nearby request)
         @(posedge clk) (($rose(rd_en) && fifo_status == 3'd0), addr1=rd_addr) ##1 (rd_en == 1'b0, addr2=rd_addr) |-> addr1 == addr2;
     endproperty
 
