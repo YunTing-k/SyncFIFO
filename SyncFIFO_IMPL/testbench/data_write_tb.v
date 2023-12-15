@@ -60,7 +60,7 @@ wire ready_dst0, ready_dst1, ready_dst2, ready_dst3, ready_dst4, ready_dst5, rea
 //-----------------------instance define------------------------//
 top_wrapper top_wrapper_inst(
     .clk            (clk          ),  // clock
-    .reset_n        (rst_n        ),  // reset signal, active low
+    .rst_n          (rst_n        ),  // reset signal, active low
     .pwrite         (pwrite       ),  // 1-write, 0-read
     .psel           (psel         ),  // scletion signal
     .paddr          (paddr        ),  // address bus

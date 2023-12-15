@@ -1,0 +1,106 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dc:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO
+vdut
+Z1 DXx6 sv_std 3 std 0 22 AD7iAPLo6nTIKk<N0eo=D3
+!s110 1702615867
+!i10b 1
+!s100 o[^;HDhUgfdgK`5T;Z7IT2
+I]4?BXbHOYam@2MIXoF>RO3
+Z2 VDg1SIo80bB@j0V0VzS_@n1
+!s105 DUT_sv_unit
+S1
+R0
+w1701933579
+8c:\Users\12416\Desktop\HDLWorkSpace\QuestaSim\SyncFIFO\SyncFIFO_Assertion\DUT.sv
+Fc:\Users\12416\Desktop\HDLWorkSpace\QuestaSim\SyncFIFO\SyncFIFO_Assertion\DUT.sv
+L0 30
+Z3 OL;L;10.6c;65
+r1
+!s85 0
+31
+!s108 1702615867.000000
+!s107 c:\Users\12416\Desktop\HDLWorkSpace\QuestaSim\SyncFIFO\SyncFIFO_Assertion\DUT.sv|
+!s90 -nologo|-work|.\work|c:\Users\12416\Desktop\HDLWorkSpace\QuestaSim\SyncFIFO\SyncFIFO_Assertion\DUT.sv|
+!i113 0
+Z4 o-nologo -work {.\work} -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
+Z5 tCvgOpt 0
+vdut_apb_assertion
+R1
+Z6 !s110 1702615865
+!i10b 1
+!s100 O5XEYfh2iQETG1ci`[nYc1
+IY]QLeFY5b@T1[U^f`4UTU1
+R2
+Z7 !s105 DUT_ASSERTION_sv_unit
+S1
+R0
+Z8 w1701933833
+Z9 8c:\Users\12416\Desktop\HDLWorkSpace\QuestaSim\SyncFIFO\SyncFIFO_Assertion\DUT_ASSERTION.sv
+Z10 Fc:\Users\12416\Desktop\HDLWorkSpace\QuestaSim\SyncFIFO\SyncFIFO_Assertion\DUT_ASSERTION.sv
+L0 196
+R3
+r1
+!s85 0
+31
+Z11 !s108 1702615863.000000
+Z12 !s107 c:\Users\12416\Desktop\HDLWorkSpace\QuestaSim\SyncFIFO\SyncFIFO_Assertion\DUT_ASSERTION.sv|
+Z13 !s90 -nologo|-work|.\work|c:\Users\12416\Desktop\HDLWorkSpace\QuestaSim\SyncFIFO\SyncFIFO_Assertion\DUT_ASSERTION.sv|
+!i113 0
+R4
+R5
+vdut_assertion
+R1
+R6
+!i10b 1
+!s100 U15?3fEWP^MZR?102=RiQ0
+IcdQhP0ln@bCk@=^i;l<5]2
+R2
+R7
+S1
+R0
+R8
+R9
+R10
+L0 28
+R3
+r1
+!s85 0
+31
+R11
+R12
+R13
+!i113 0
+R4
+R5
+vdut_channel_assertion
+R1
+R6
+!i10b 1
+!s100 :Oa6aa7o^Di8`Okhoc90?0
+I>=IH=f>=::WNVfPmGlZPP1
+R2
+R7
+S1
+R0
+R8
+R9
+R10
+L0 171
+R3
+r1
+!s85 0
+31
+R11
+R12
+R13
+!i113 0
+R4
+R5

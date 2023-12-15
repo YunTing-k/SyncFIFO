@@ -24,7 +24,7 @@
 `timescale 1ns / 1ps
 module top_wrapper(
     input clk,
-    input reset_n,
+    input rst_n,
 
 //apb slave port
     input pwrite,          // 1-write, 0-read
@@ -95,7 +95,7 @@ wire [4 - 1:0] wr_ptr_err_idx_reg, rd_ptr_err_idx_reg; // ERRPTR - 1:0
 
 apb_slave apb_slave_inst(
     .clk(clk),                                // clock
-    .rst_n(reset_n),                          // reset signal active low
+    .rst_n(rst_n),                            // reset signal active low
     .pwrite(pwrite),                          // [from APB] 1-write, 0-read
     .psel(psel),                              // [from APB] scletion signal
     .paddr(paddr),                            // [from APB] address bus
@@ -112,7 +112,7 @@ apb_slave apb_slave_inst(
 fifo_wrapper #(.ADDR(10), .DEPTH(1024), .ERRPTR(4), .WIDTH(32), .ERRDATA(6))
 fifo_wrapper_inst(
     .clk(clk),                                // clock
-    .rst_n(reset_n),                          // reset signal active low
+    .rst_n(rst_n),                            // reset signal active low
     .apb_write_data(apb_write_data),          // write data from apb slave reg
     .apb_wr_en(apb_wr_en),                    // write enable from apb slave
     .arbiter_rd_en(arbiter_rd_en),            // read enable from arbiter
@@ -130,7 +130,7 @@ fifo_wrapper_inst(
 arbiter #(.ADDR(10), .ERRPTR(4), .WIDTH(32), .ERRDATA(6))
 arbiter_inst(
     .clk(clk),                                // clock
-    .rst_n(reset_n),                          // reset signal active low
+    .rst_n(rst_n),                            // reset signal active low
     .addr_dst0(addr_dst0),                    // channel0 address
     .priority_dst0(priority_dst0),            // channel0 priority
     .valid_dst0(valid_dst0),                  // channel0 valid
@@ -180,5 +180,4 @@ arbiter_inst(
     .data_dst7(data_dst7),                    // channel7 data output
     .ready_dst7(ready_dst7)                   // channel7 ready signal
 );
-
 endmodule
