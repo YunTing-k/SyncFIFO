@@ -20,6 +20,7 @@
 // [Date]         [By]         [Version]         [Change Log]
 // ---------------------------------------------------------------------------------
 // 2023/11/28     Yu Huang     1.0               First implmentation
+// 2023/12/19     Yu Huang     1.1               Modify timing for low-power spec
 // ---------------------------------------------------------------------------------
 //
 //-FHDR//////////////////////////////////////////////////////////////////////////////
@@ -143,10 +144,10 @@ package dst_agent_objects;
                 // to Arbiter idle
                 @(posedge this.active_channel.clk)
                     // this.active_channel.addr_dst = 8'd0;
-                    // this.active_channel.priority_dst = 8'd0;
-                    // this.active_channel.valid_dst = 1'b0;
-                    this.active_channel.cb_dst.addr_dst <= 8'd0;
-                    this.active_channel.cb_dst.priority_dst <= 8'd0;
+                    // this.active_channel.priority_dst = 8'd0; // for low-power spec
+                    // this.active_channel.valid_dst = 1'b0; // for low-power spec
+                    // this.active_channel.cb_dst.addr_dst <= 8'd0; // for low-power spec
+                    // this.active_channel.cb_dst.priority_dst <= 8'd0; // for low-power spec
                     this.active_channel.cb_dst.valid_dst <= 1'b0;
         endtask
     endclass

@@ -23,6 +23,7 @@
 // [Date]         [By]         [Version]         [Change Log]
 // ---------------------------------------------------------------------------------
 // 2023/11/15     Yu Huang     1.0               First implmentation
+// 2023/12/07     Yu Huang     1.1               Modify timing for low-power spec
 // ---------------------------------------------------------------------------------
 //
 //-FHDR//////////////////////////////////////////////////////////////////////////////
@@ -201,10 +202,10 @@ package src_agent_objects;
                     // this.active_channel.channel_paddr = 32'h0000_0000;
                     // this.active_channel.channel_pwdata = 32'h0000_0000;
                     // this.active_channel.channel_penable = 1'b0;
-                    this.active_channel.cb_src.channel_pwrite <= 1'b0;
+                    // this.active_channel.cb_src.channel_pwrite <= 1'b0; // // for low-power spec
                     this.active_channel.cb_src.channel_psel <= 1'b0;
-                    // this.active_channel.cb_src.channel_paddr <= 32'h0000_0000; // for addr stable until next transmission
-                    // this.active_channel.cb_src.channel_pwdata <= 32'h0000_0000; // for addr stable until next transmission
+                    // this.active_channel.cb_src.channel_paddr <= 32'h0000_0000; // for low-power spec
+                    // this.active_channel.cb_src.channel_pwdata <= 32'h0000_0000; // for low-power spec
                     this.active_channel.cb_src.channel_penable <= 1'b0;
         endtask
     endclass

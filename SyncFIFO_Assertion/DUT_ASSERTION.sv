@@ -21,7 +21,8 @@
 // ---------------------------------------------------------------------------------
 // [Date]         [By]         [Version]         [Change Log]
 // ---------------------------------------------------------------------------------
-// 2023/12/07     Yu Huang     1.0               First implmentation
+// 2023/12/07     Yu Huang     1.0               APB assertion
+// 2023/12/19     Yu Huang     1.1               Read channel assertion
 // ---------------------------------------------------------------------------------
 //
 //-FHDR//////////////////////////////////////////////////////////////////////////////
@@ -194,7 +195,21 @@ endmodule
 // ---------------------------------------------------------------------------------
 // Read channel assertion defination, assertion properties:
 // ---------------------------------------------------------------------------------
-// [1]: valid-ready handshake check
+// [1]:  after valid set high, addr shouldn't be X
+// [2]:  after valid set high, addr shouldn't be out of access range
+// [3]:  addr should be stable during request
+// [4]:  addr should be stable until next request
+// [5]:  after valid set high, priority shouldn't be X
+// [6]:  priority should be stable during request
+// [7]:  priority should be stable until next request
+// [8]:  valid shouldn't be x after reset
+// [9]:  valid must be stable until the ready rises
+// [10]: valid must fall in next cycle when ready is high
+// [11]: after ready set high, data shouldn't be X
+// [12]: data should be stable until next request
+// [13]: ready shouldn't be x after reset
+// [14]: ready must fall with valid (disable when reset)
+// [15]: ready must fall in next cycle when ready is high
 // ---------------------------------------------------------------------------------
 module channel_assertion(
     input clk,
@@ -205,10 +220,115 @@ module channel_assertion(
     input [31:0] data, // channel output data
     input ready        // channel ready signal
 );
-    property _ch_handshake_check;
-        @(posedge clk) $rose(valid) |-> ##[1:$] (valid && ready);
+//ADDR ASSERTION
+    property _addr_no_x_valid_high;
+        // after valid set high, addr shouldn't be X
+        @(posedge clk) $rose(valid) |-> not ($isunknown(addr));
     endproperty
-    ch_handshake_check: assert property (_ch_handshake_check) else $error($time, "\t\t Valid-Ready handshake of read channel FAILED!\n");
+
+    property _addr_valid;
+        // after valid set high, addr shouldn't be out of access range
+        @(posedge clk) $rose(valid) |-> (addr <= `READ_PTR_ERR_IDX);
+    endproperty
+
+    property _addr_stable_in_req;
+        // addr should be stable during request
+        @(posedge clk) (!ready && valid && !$rose(valid)) |-> $stable(addr);
+    endproperty
+
+    property _addr_stable_until_next_req;
+        // addr should be stable until next request
+        logic[7:0] addr1, addr2;
+        // avoid multiple matched sequences (multiple addr1 and addr2 that may not in a nearby request)
+        @(posedge clk) first_match(($rose(valid),addr1=addr) ##[1:$] ($rose(valid),addr2=$past(addr))) |-> addr1 == addr2;
+    endproperty
+
+chaddr_no_x: assert property (_addr_no_x_valid_high) else $error($time, "\t\t Check channel addr no X FAILED!\n");
+chaddr_valid: assert property (_addr_valid) else $error($time, "\t\t Check channel addr valid FAILED!\n");
+chaddr_stable_in_req: assert property (_addr_stable_in_req) else $error($time, "\t\t Check channel addr stable during request FAILED!\n");
+chaddr_satble_until_next_req: assert property (_addr_stable_until_next_req) else $error($time, "\t\t Check channel addr stable until next request FAILED!\n");
+
+//PRIORITY ASSERTION
+    property _prior_no_x_valid_high;
+        // after valid set high, priority shouldn't be X
+        @(posedge clk) $rose(valid) |-> not ($isunknown(prior));
+    endproperty
+
+    property _prior_stable_in_req;
+        // priority should be stable during request
+        @(posedge clk) (!ready && valid && !$rose(valid)) |-> $stable(prior);
+    endproperty
+
+    property _prior_stable_until_next_req;
+        // priority should be stable until next request
+        logic[7:0] prior1, prior2;
+        // avoid multiple matched sequences (multiple priority1 and priority2 that may not in a nearby request)
+        @(posedge clk) first_match(($rose(valid),prior1=prior) ##[1:$] ($rose(valid),prior2=$past(prior))) |-> prior1 == prior2;
+    endproperty
+
+chprior_no_x: assert property (_prior_no_x_valid_high) else $error($time, "\t\t Check priority no X FAILED!\n");
+chprior_stable_in_req: assert property (_prior_stable_in_req) else $error($time, "\t\t Check priority stable during request FAILED!\n");
+chprior_satble_until_next_req: assert property (_prior_stable_until_next_req) else $error($time, "\t\t Check priority stable until next request FAILED!\n");
+
+//VALID ASSERTION
+    property _valid_no_x;
+        // valid shouldn't be x after reset
+        @(posedge clk) disable iff(~rst_n)
+            not $isunknown(prior);
+    endproperty
+
+    property _valid_stable;
+        // valid must be stable until the ready rises
+        @(posedge clk) disable iff(~rst_n)
+            $rose(valid) |-> valid[*1:$] ##0 $rose(ready);
+    endproperty
+
+    property _valid_instant_fall;
+        // valid must fall in next cycle when ready is high
+        @(posedge clk) (ready) |=> $fell(valid);
+    endproperty
+
+valid_no_x: assert property (_valid_no_x) else $error($time, "\t\t Check valid no X FAILED!\n");
+valid_stable: assert property (_valid_stable) else $error($time, "\t\t Check channel valid stable FAILED!\n");
+valid_instant_fall: assert property (_valid_instant_fall) else $error($time, "\t\t Check cahnnel valid instantly falls FAILED!\n");
+
+//DATA ASSERTION
+    property _data_no_x_ready_high;
+        // after ready set high, data shouldn't be X
+        @(posedge clk) $rose(ready) |-> not ($isunknown(data));
+    endproperty
+
+    property _data_stable_until_next_req;
+        // data should be stable until next request
+        logic[31:0] data1, data2;
+        // avoid multiple matched sequences (multiple data1 and data2 that may not in a nearby request)
+        @(posedge clk) first_match(($rose(ready),data1=data) ##[1:$] ($rose(ready),data2=$past(data))) |-> data1 == data2;
+    endproperty
+
+chdata_no_x: assert property (_data_no_x_ready_high) else $error($time, "\t\t Check channel read data no X FAILED!\n");
+chdata_satble_until_next_req: assert property (_data_stable_until_next_req) else $error($time, "\t\t Check channel read data stable until next request FAILED!\n");
+
+//READY ASSERTION
+    property _ready_no_x;
+        // ready shouldn't be x after reset
+        @(posedge clk) disable iff(~rst_n)
+            not $isunknown(ready);
+    endproperty
+
+    property _ready_fall_with_valid;
+        // ready must fall with valid (disable when reset)
+        @(posedge clk) disable iff(~rst_n)
+            $fell(ready) |-> $fell(valid)
+    endproperty
+
+    property _ready_instant_fall;
+        // ready must fall in next cycle when ready is high
+        @(posedge clk) (ready) |-> $rose(ready);
+    endproperty
+
+ready_no_x: assert property (_ready_no_x) else $error($time, "\t\t Check channel ready no X FAILED!\n");
+ready_fall_with_valid: assert property(_ready_fall_with_valid) else $error($stime,"\t\t Check ready falls with valid FAILED!\n");
+ready_instant_fall: assert property(_ready_instant_fall) else $error($stime,"\t\t Check ready instantly falls FAILED!\n");
 endmodule
 
 // ---------------------------------------------------------------------------------
@@ -218,16 +338,21 @@ endmodule
 // [2]:  after psel set high, paddr shouldn't be out of access range
 // [3]:  paddr should be stable when APB slave in SETUP state
 // [4]:  paddr should be stable until next transmission
-// [5]:  after psel rises, penable must rose in next cycle
-// [6]:  when pready dosen't rise, penable should be stable after it rises
-// [7]:  penable must fall in next cycle when ready is high
-// [8]:  psel must be stable until the pready rises
-// [9]:  when before access, pwdata should be stable
-// [10]: pwdata should be stable until the next trans
-// [11]: pwrite must be stable until the pready rises
-// [12]: prdata must be stable until the next transmission
-// [13]: pready must fall with psel
-// [14]: pready must fall with penable
+// [5]:  penable shouldn't be x after reset
+// [6]:  after psel rises, penable must rose in next cycle
+// [7]:  when pready dosen't rise, penable should be stable after it rises
+// [8]:  penable must fall in next cycle when ready is high
+// [9]:  psel shouldn't be x after reset
+// [10]: psel must be stable until the pready rises
+// [11]: after psel set high, pwdata shouldn't be X
+// [12]: when before access, pwdata should be stable
+// [13]: pwdata should be stable until the next trans
+// [14]: pwrite shouldn't be x after reset
+// [15]: pwrite must be stable until the pready rises
+// [16]: after pready set high, prdata shouldn't be X
+// [17]: prdata must be stable until the next transmission
+// [18]: pready must fall with penable (disable when reset)
+// [19]: pready must fall in next cycle when pready is high
 // ---------------------------------------------------------------------------------
 module apb_assertion(
     input clk,
@@ -243,17 +368,17 @@ module apb_assertion(
 //PADDR ASSERTION
     property _paddr_no_x_psel_high;
         // after psel set high, paddr shouldn't be X
-        @(posedge clk)  psel |-> not ($isunknown(paddr));
+        @(posedge clk) $rose(psel) |-> not ($isunknown(paddr));
     endproperty
 
     property _paddr_valid;
         // after psel set high, paddr shouldn't be out of access range
-        @(posedge clk)  psel |-> ((paddr == `FIFO_WRITE_DATA) || (paddr == `FIFO_STATUS));
+        @(posedge clk) $rose(psel) |-> ((paddr == `FIFO_WRITE_DATA) || (paddr == `FIFO_STATUS));
     endproperty
 
     property _paddr_stable_in_trans;
         // paddr should be stable when APB slave in SETUP state
-	    @(posedge clk) (psel && penable) |-> $stable(paddr);
+        @(posedge clk) (psel && penable) |-> $stable(paddr);
     endproperty
 
     property _paddr_stable_until_next_trans;
@@ -269,6 +394,12 @@ paddr_stable_in_trans: assert property(_paddr_stable_in_trans) else $error($stim
 paddr_stable_until_next_trans: assert property(_paddr_stable_until_next_trans) else $error($stime,"\t\t Check paddr stable before next transmission FAILED!\n");
 
 //PENABLE ASSERTION
+    property _penable_no_x;
+        // penable shouldn't be x after reset
+        @(posedge clk) disable iff(~rst_n)
+            not $isunknown(penable);
+    endproperty
+
     property _penable_rise;
         // after psel rises, penable must rose in next cycle
         @(posedge clk) $rose(psel) |=> $rose(penable);
@@ -276,7 +407,8 @@ paddr_stable_until_next_trans: assert property(_paddr_stable_until_next_trans) e
 
     property _penable_stable;
         // when pready dosen't rise, penable should be stable after it rises
-        @(posedge clk) (!pready && penable && !$rose(penable)) |-> $stable(penable);
+        @(posedge clk) disable iff(~rst_n)
+            $rose(penable) |-> penable[*1:$] ##0 $rose(pready);
     endproperty
 
     property _penable_instant_fall;
@@ -284,19 +416,35 @@ paddr_stable_until_next_trans: assert property(_paddr_stable_until_next_trans) e
         @(posedge clk) (penable && pready) |=> $fell(penable);
     endproperty
 
+penable_no_x: assert property (_penable_no_x) else $error($stime,"\t\t Check penable no X FAILED!\n");
 penable_rise: assert property (_penable_rise) else $error($stime,"\t\t Check penable rise after psel rises FAILED!\n");
 penable_stable:assert property (_penable_stable) else $error($stime,"\t\t Check penable stable before pready rises FAILED!\n");
 penable_instant_fall:assert property (_penable_instant_fall) else $error($stime,"\t\t Check penable falls one cycle after it rises FAILED!\n");
 
 //PSEL ASSERTION
-    property _psel_stable;
-        // psel must be stable until the pready rises
-        @(posedge clk) (!pready && psel && !$rose(psel)) |-> $stable(psel);
+    property _psel_no_x;
+        // psel shouldn't be x after reset
+        @(posedge clk) disable iff(~rst_n)
+            not $isunknown(psel);
     endproperty
 
+    property _psel_stable;
+        // psel must be stable until the pready rises
+        @(posedge clk) disable iff(~rst_n)
+            $rose(psel) |-> psel[*1:$] ##0 $rose(pready);
+    endproperty
+
+    // PSEL may not instant fall, because there exists back-to-back transfer
+
+psel_no_x: assert property (_psel_no_x) else $error($stime,"\t\t Check psel no X FAILED!\n");
 psel_stable: assert property(_psel_stable) else $error($stime,"\t\t Check psel stable until pready rises FAILED!\n");
 
 //PWDATA ASSERTION
+    property _pwdata_no_x_psel_high;
+        // after psel set high, pwdata shouldn't be X
+        @(posedge clk) $rose(psel) |-> not ($isunknown(pwdata));
+    endproperty
+
     property _pwdata_stable_in_trans;
         // when before access, pwdata should be stable
         @(posedge clk) (psel && penable) |-> $stable(pwdata);
@@ -309,28 +457,31 @@ psel_stable: assert property(_psel_stable) else $error($stime,"\t\t Check psel s
         @(posedge clk) first_match(($rose(psel),data1=pwdata) ##[1:$] ((psel && !penable),data2=$past(pwdata))) |-> data1 == data2;
     endproperty
 
+pwdata_no_x_psel_high: assert property(_pwdata_no_x_psel_high) else $error($stime,"\t\t Check pwdata no X FAILED!\n");
 pwdata_stable_in_trans: assert property(_pwdata_stable_in_trans) else $error($stime,"\t\t Check pwdata stable in this transmission FAILED!\n");
 pwdata_stable_until_next_trans: assert property(_pwdata_stable_until_next_trans) else $error($stime,"\t\t Check pwdata stable until next transmission FAILED!\n");
 
 //PWRITE ASSERTION
-    property _pwrite_stable_A;
-        // pwrite must be stable until the pready rises
-        @(posedge clk) (!pready && psel) |=> $stable(pwrite);
+    property _pwrite_no_x;
+        // pwrite shouldn't be x after reset
+        @(posedge clk) disable iff(~rst_n)
+            not $isunknown(pwrite);
     endproperty
 
-    property _pwrite_stable_B;
+    property _pwrite_stable;
         // pwrite must be stable until the pready rises
-        @(posedge clk) (!pready && psel) |-> first_match(($rose(pwrite)) ##[1:$] pwrite);
+        @(posedge clk) $rose(pwrite) |-> pwrite[*1:$] ##0 $rose(pready);
     endproperty
 
-    property _pwrite_stable_C;
-        // pwrite must be stable until the pready rises
-        @(posedge clk) (!pready && psel) |-> first_match((!pwrite) ##[1:$] !pwrite);
-    endproperty
-
-pwrite_stable: assert property(_pwrite_stable_A and (_pwrite_stable_B or _pwrite_stable_C)) else $error($stime,"\t\t Check pwrite stable FAILED!\n");
+pwrite_no_x: assert property (_pwrite_no_x) else $error($stime,"\t\t Check pwrite no X FAILED!\n");
+pwrite_stable: assert property(_pwrite_stable) else $error($stime,"\t\t Check pwrite stable FAILED!\n");
 
 //PRDATA ASSERTION
+    property _prdata_no_x_pready_high;
+        // after pready set high, prdata shouldn't be X
+        @(posedge clk) $rose(pready) |-> not ($isunknown(prdata));
+    endproperty
+
     property _prdata_stable_until_next_trans;
         // prdata must be stable until the next transmission
         logic[31:0] data1, data2;
@@ -338,21 +489,26 @@ pwrite_stable: assert property(_pwrite_stable_A and (_pwrite_stable_B or _pwrite
         @(posedge clk) first_match(($rose(pready) && !pwrite, data1=prdata) ##[1:$] ((psel && !penable),data2=$past(prdata))) |-> data1 == data2;
     endproperty
 
+prdata_no_x_pready_high: assert property(_prdata_no_x_pready_high) else $error($stime,"\t\t Check prdata no X FAILED!\n");
 prdata_stable_until_next_trans: assert property(_prdata_stable_until_next_trans) else $error($stime,"\t\t Check prdata stable until next transmission FAILED!\n");
 
 //PREADY ASSERTION
-    property _pready_fall_with_psel;
-        // pready must fall with psel
-        @(posedge clk) ($fell(pready) && rst_n == 1'b1) |-> $fell(psel)
-    endproperty
+
+    // PREADY may not fall with psel, because there exists back-to-back transfer
 
     property _pready_fall_with_penable;
-        // pready must fall with penable
-        @(posedge clk) ($fell(pready) && rst_n == 1'b1) |-> $fell(penable)
+        // pready must fall with penable (disable when reset)
+        @(posedge clk) disable iff(~rst_n)
+            $fell(pready) |-> $fell(penable)
     endproperty
 
-pready_fall_with_psel: assert property(_pready_fall_with_psel) else $error($stime,"\t\t Check pready falls with psel FAILED!\n");
+    property _pready_instant_fall;
+        // pready must fall in next cycle when pready is high
+        @(posedge clk) (pready) |=> $fell(pready);
+    endproperty
+
 pready_fall_with_penable: assert property(_pready_fall_with_penable) else $error($stime,"\t\t Check pready falls with penable FAILED!\n");
+pready_instant_fall: assert property(_pready_instant_fall) else $error($stime,"\t\t Check pready instantly falls FAILED!\n");
 endmodule
 
 // ---------------------------------------------------------------------------------
