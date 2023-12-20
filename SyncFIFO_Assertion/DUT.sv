@@ -13,9 +13,10 @@
 // Testbench Design: DUT
 // Tool versions: QuestaSim 10.6c
 // Description: 
-// Connect the DUT([$(DUT Top)].v) to testbench in interface.
+// Connect the DUT([$(DUT Top)].v) to testbench in interface and the assertion instance
+// of DUT(APB, Arbiter, FIFO).
 // Dependencies:
-// top_wrapper.v
+// top_wrapper.v, INTF.sv, DUT_ASSERTION.sv
 //
 // Revision:
 // ---------------------------------------------------------------------------------

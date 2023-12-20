@@ -81,19 +81,19 @@ QuestaSim-64 vlog 10.6c Compiler 2017.07 Jul 26 2017
 Top level modules:
 	find_max
 
-} {} {}} C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/fifo_read.v {1 {vlog -work work -vopt -stats=none C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/fifo_read.v
-QuestaSim-64 vlog 10.6c Compiler 2017.07 Jul 26 2017
--- Compiling module fifo_read
-
-Top level modules:
-	fifo_read
-
 } {} {}} C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/data_encode.v {1 {vlog -work work -vopt -stats=none C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/data_encode.v
 QuestaSim-64 vlog 10.6c Compiler 2017.07 Jul 26 2017
 -- Compiling module data_encode
 
 Top level modules:
 	data_encode
+
+} {} {}} C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/fifo_read.v {1 {vlog -work work -vopt -stats=none C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/fifo_read.v
+QuestaSim-64 vlog 10.6c Compiler 2017.07 Jul 26 2017
+-- Compiling module fifo_read
+
+Top level modules:
+	fifo_read
 
 } {} {}} C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_Assertion/TESTBENCH.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_Assertion/TESTBENCH.sv
 QuestaSim-64 vlog 10.6c Compiler 2017.07 Jul 26 2017
@@ -108,11 +108,10 @@ QuestaSim-64 vlog 10.6c Compiler 2017.07 Jul 26 2017
 Top level modules:
 	testbench_top
 
-} {} {}} C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_Assertion/DST_AGENT.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_Assertion/DST_AGENT.sv
+} {} {}} C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_Assertion/INTF.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_Assertion/INTF.sv
 QuestaSim-64 vlog 10.6c Compiler 2017.07 Jul 26 2017
--- Compiling package dst_agent_objects
--- Compiling package dst_agent_main
--- Importing package dst_agent_objects
+-- Compiling interface duttb_intf_srcchannel
+-- Compiling interface duttb_intf_dstchannel
 
 Top level modules:
 	--none--
@@ -124,10 +123,11 @@ QuestaSim-64 vlog 10.6c Compiler 2017.07 Jul 26 2017
 Top level modules:
 	arbiter
 
-} {} {}} C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_Assertion/INTF.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_Assertion/INTF.sv
+} {} {}} C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_Assertion/DST_AGENT.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_Assertion/DST_AGENT.sv
 QuestaSim-64 vlog 10.6c Compiler 2017.07 Jul 26 2017
--- Compiling interface duttb_intf_srcchannel
--- Compiling interface duttb_intf_dstchannel
+-- Compiling package dst_agent_objects
+-- Compiling package dst_agent_main
+-- Importing package dst_agent_objects
 
 Top level modules:
 	--none--
@@ -138,6 +138,17 @@ QuestaSim-64 vlog 10.6c Compiler 2017.07 Jul 26 2017
 
 Top level modules:
 	top_wrapper
+
+} {} {}} C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_Assertion/DUT_ASSERTION.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_Assertion/DUT_ASSERTION.sv
+QuestaSim-64 vlog 10.6c Compiler 2017.07 Jul 26 2017
+-- Compiling module dut_io_assertion
+-- Compiling module channel_assertion
+-- Compiling module apb_assertion
+-- Compiling module dut_fifo_assertion
+
+Top level modules:
+	dut_io_assertion
+	dut_fifo_assertion
 
 } {} {}} C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/read_channel.v {1 {vlog -work work -vopt -stats=none C:/Users/12416/Desktop/HDLWorkSpace/QuestaSim/SyncFIFO/SyncFIFO_IMPL/design/read_channel.v
 QuestaSim-64 vlog 10.6c Compiler 2017.07 Jul 26 2017

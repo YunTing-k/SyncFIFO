@@ -24,6 +24,7 @@
 // [Date]         [By]         [Version]         [Change Log]
 // ---------------------------------------------------------------------------------
 // 2023/11/28     Yu Huang     1.0               First implmentation
+// 2023/12/20     Yu Huang     1.1               Add back-to-back write test
 // ---------------------------------------------------------------------------------
 //
 //-FHDR//////////////////////////////////////////////////////////////////////////////
@@ -144,6 +145,7 @@ program testbench(
         repeat(11) @(posedge clk);
         fork
             // envctrl.run("APB Single Write");
+            // envctrl.run("APB B2B Write");
             // envctrl.run("APB IO Random Access");
             // envctrl.run("Arbiter Read Single");
             // envctrl.run("Arbiter Read Simultaneous");

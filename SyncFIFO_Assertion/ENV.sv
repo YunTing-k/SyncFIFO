@@ -23,6 +23,7 @@
 // [Date]         [By]         [Version]         [Change Log]
 // ---------------------------------------------------------------------------------
 // 2023/11/28     Yu Huang     1.0               First implmentation
+// 2023/12/20     Yu Huang     1.1               Add back-to-back write test
 // ---------------------------------------------------------------------------------
 //
 //-FHDR//////////////////////////////////////////////////////////////////////////////
@@ -108,8 +109,23 @@ package env;
                 "APB Single Write": begin
                     // apb io test for reg of write data and fifo status, random read and random write
                     $display("[ENV] start work : APB Single Write!");
-                    for (int i = 0;i < 1024;i++)begin // fill the fifo
+                    for (int i = 0;i < 1024;i++) begin // fill the fifo
                         src_agent.single_tran(1, 0, `FIFO_WRITE_DATA, i + 1);
+                    end
+                    // FIFO full write test
+                    src_agent.single_tran(1, 0, `FIFO_WRITE_DATA, 32'hFFFF_FFFF);
+                    $display("[ENV] finish work : APB Single Write!");
+                end
+                "APB B2B Write": begin
+                    // apb io test for reg of write data and fifo status, random read and random write
+                    $display("[ENV] start work : APB B2B Write!");
+                    for (int i = 0;i < 1024;i++) begin // fill the fifo
+                        if (i == 0)
+                            src_agent.b2b_tran_head(1, 0, `FIFO_WRITE_DATA, i + 1);
+                        else if(i != 1023)
+                            src_agent.b2b_tran_body(1, 0, `FIFO_WRITE_DATA, i + 1);
+                        else
+                            src_agent.b2b_tran_tail(1, 0, `FIFO_WRITE_DATA, i + 1);
                     end
                     // FIFO full write test
                     src_agent.single_tran(1, 0, `FIFO_WRITE_DATA, 32'hFFFF_FFFF);
@@ -226,10 +242,18 @@ package env;
                 "Random APB/Arbiter Access": begin
                     // apb and arbiter joint test, random time access, random data access
                     $display("[ENV] start work : Random APB/Arbiter Access!");
-                    for (int i = 0;i < 512;i++)begin // fill the half of the fifo
+                    for (int i = 0;i < 256;i++) begin // push 256 data into the fifo with single tran
                         src_agent.single_tran(1, 0, `FIFO_WRITE_DATA, i + 1);
                     end
-                    for (int i = 0;i < 1024;i++)begin
+                    for (int i = 256;i < 512;i++) begin // push 256 data into the fifo with b2b tran
+                        if (i == 256)
+                            src_agent.b2b_tran_head(1, 0, `FIFO_WRITE_DATA, i + 1);
+                        else if(i != 511)
+                            src_agent.b2b_tran_body(1, 0, `FIFO_WRITE_DATA, i + 1);
+                        else
+                            src_agent.b2b_tran_tail(1, 0, `FIFO_WRITE_DATA, i + 1);
+                    end
+                    for (int i = 0;i < 1024;i++) begin
                         // fifo random access and arbiter random access
                         fork
                             begin 
@@ -264,7 +288,7 @@ package env;
                 end
                 "Time Out": begin
                     $display("[ENV] start work : Time Out !");
-                    #50000
+                    #80000
                     $display("[ENV] time out !");
                 end
                 default: begin

@@ -14,7 +14,7 @@
 // Tool versions: QuestaSim 10.6c
 // Description: 
 // APB's agent moudule for testbench of DUT. APB single Read/Write event define.
-// APB write data randomize and monitor.
+// APB back-to-back Read/Write event define. APB write data randomize and monitor.
 // Dependencies:
 // N/A
 //
@@ -24,6 +24,7 @@
 // ---------------------------------------------------------------------------------
 // 2023/11/15     Yu Huang     1.0               First implmentation
 // 2023/12/07     Yu Huang     1.1               Modify timing for low-power spec
+// 2023/12/20     Yu Huang     1.2               Add back-to-back transmit timing
 // ---------------------------------------------------------------------------------
 //
 //-FHDR//////////////////////////////////////////////////////////////////////////////
@@ -163,6 +164,100 @@ package src_agent_objects;
         endtask
 
         // -------------------------------------------------------------------------
+        // [data_read_head]: Head of the back-to-back APB read data handhsake
+        // -------------------------------------------------------------------------
+        task data_read_head();
+            // get data from mailbox to random_data_get
+            src_randomgen_datapkg random_data_get;
+            this.gen2drv.get(random_data_get);
+            // APB config
+            @(posedge this.active_channel.clk)
+                // this.active_channel.channel_pwrite = 1'b0;
+                // this.active_channel.channel_psel = 1'b1;
+                // this.active_channel.channel_paddr = random_data_get.addr;
+                // this.active_channel.channel_pwdata = random_data_get.data;
+                // this.active_channel.channel_penable = 1'b0;
+                this.active_channel.cb_src.channel_pwrite <= 1'b0;
+                this.active_channel.cb_src.channel_psel <= 1'b1;
+                this.active_channel.cb_src.channel_paddr <= random_data_get.addr;
+                this.active_channel.cb_src.channel_pwdata <= random_data_get.data;
+                this.active_channel.cb_src.channel_penable <= 1'b0;
+            // APB access
+            @(posedge this.active_channel.clk)
+                // this.active_channel.channel_penable = 1'b1;
+                this.active_channel.cb_src.channel_penable <= 1'b1;
+        endtask
+
+        // -------------------------------------------------------------------------
+        // [data_read_body]: Body of the back-to-back APB read data handhsake
+        // -------------------------------------------------------------------------
+        task data_read_body();
+            // get data from mailbox to random_data_get
+            src_randomgen_datapkg random_data_get;
+            this.gen2drv.get(random_data_get);
+            // Wait for APB slave ready
+            // wait(this.active_channel.channel_pready)
+            wait(this.active_channel.cb_src.channel_pready == 1'b1)
+                // APB config
+                // @(negedge this.active_channel.channel_pready)
+                @(negedge this.active_channel.cb_src.channel_pready)
+                    // this.active_channel.channel_pwrite = 1'b0;
+                    // this.active_channel.channel_psel = 1'b1;
+                    // this.active_channel.channel_paddr = random_data_get.addr;
+                    // this.active_channel.channel_pwdata = random_data_get.data;
+                    // this.active_channel.channel_penable = 1'b0;
+                    this.active_channel.cb_src.channel_pwrite <= 1'b0;
+                    this.active_channel.cb_src.channel_psel <= 1'b1;
+                    this.active_channel.cb_src.channel_paddr <= random_data_get.addr;
+                    this.active_channel.cb_src.channel_pwdata <= random_data_get.data;
+                    this.active_channel.cb_src.channel_penable <= 1'b0;
+                // APB access
+                @(posedge this.active_channel.clk)
+                    // this.active_channel.channel_penable = 1'b1;
+                    this.active_channel.cb_src.channel_penable <= 1'b1;
+        endtask
+
+        // -------------------------------------------------------------------------
+        // [data_read_tail]: Tail of the back-to-back APB read data handhsake
+        // -------------------------------------------------------------------------
+        task data_read_tail();
+            // get data from mailbox to random_data_get
+            src_randomgen_datapkg random_data_get;
+            this.gen2drv.get(random_data_get);
+            // Wait for APB slave ready
+            // wait(this.active_channel.channel_pready)
+            wait(this.active_channel.cb_src.channel_pready == 1'b1)
+                // APB config
+                // @(negedge this.active_channel.channel_pready)
+                @(negedge this.active_channel.cb_src.channel_pready)
+                    // this.active_channel.channel_pwrite = 1'b0;
+                    // this.active_channel.channel_psel = 1'b1;
+                    // this.active_channel.channel_paddr = random_data_get.addr;
+                    // this.active_channel.channel_pwdata = random_data_get.data;
+                    // this.active_channel.channel_penable = 1'b0;
+                    this.active_channel.cb_src.channel_pwrite <= 1'b0;
+                    this.active_channel.cb_src.channel_psel <= 1'b1;
+                    this.active_channel.cb_src.channel_paddr <= random_data_get.addr;
+                    this.active_channel.cb_src.channel_pwdata <= random_data_get.data;
+                    this.active_channel.cb_src.channel_penable <= 1'b0;
+                // APB access
+                @(posedge this.active_channel.clk)
+                    // this.active_channel.channel_penable = 1'b1;
+                    this.active_channel.cb_src.channel_penable <= 1'b1;
+                @(negedge this.active_channel.cb_src.channel_pready)
+                    // this.active_channel.channel_pwrite = 1'b0;
+                    // this.active_channel.channel_psel = 1'b0;
+                    // this.active_channel.channel_paddr = 32'h0000_0000;
+                    // this.active_channel.channel_pwdata = 32'h0000_0000;
+                    // this.active_channel.channel_penable = 1'b0;
+                    this.active_channel.cb_src.channel_pwrite <= 1'b0;
+                    this.active_channel.cb_src.channel_psel <= 1'b0;
+                    // this.active_channel.cb_src.channel_paddr <= 32'h0000_0000; // for addr stable until next transmission
+                    // this.active_channel.cb_src.channel_pwdata <= 32'h0000_0000; // for addr stable until next transmission
+                    this.active_channel.cb_src.channel_penable <= 1'b0;
+        endtask
+
+        // -------------------------------------------------------------------------
         // [data_write]: APB write data handhsake
         // -------------------------------------------------------------------------
         task data_write(
@@ -195,6 +290,119 @@ package src_agent_objects;
                 pushed_count = pushed_count + 1'b1;
                 $display("[SRC AGENT] @%0d ns Data pushed into FIFO: %h, total pushed: %d ",
                          $time, random_data_get.data, pushed_count);
+                // to APB idle
+                @(posedge this.active_channel.clk)
+                    // this.active_channel.channel_pwrite = 1'b0;
+                    // this.active_channel.channel_psel = 1'b0;
+                    // this.active_channel.channel_paddr = 32'h0000_0000;
+                    // this.active_channel.channel_pwdata = 32'h0000_0000;
+                    // this.active_channel.channel_penable = 1'b0;
+                    // this.active_channel.cb_src.channel_pwrite <= 1'b0; // // for low-power spec
+                    this.active_channel.cb_src.channel_psel <= 1'b0;
+                    // this.active_channel.cb_src.channel_paddr <= 32'h0000_0000; // for low-power spec
+                    // this.active_channel.cb_src.channel_pwdata <= 32'h0000_0000; // for low-power spec
+                    this.active_channel.cb_src.channel_penable <= 1'b0;
+        endtask
+
+        // -------------------------------------------------------------------------
+        // [data_write_head]: Head of the back-to-back APB write data handhsake
+        // -------------------------------------------------------------------------
+        task data_write_head(
+            ref bit [31:0] data [8192],
+            ref bit [12:0] pushed_count
+        );
+            // get data from mailbox to random_data_get
+            src_randomgen_datapkg random_data_get;
+            this.gen2drv.get(random_data_get);
+            // APB config
+            @(posedge this.active_channel.clk)
+                // this.active_channel.channel_pwrite = 1'b1;
+                // this.active_channel.channel_psel = 1'b1;
+                // this.active_channel.channel_paddr = random_data_get.addr;
+                // this.active_channel.channel_pwdata = random_data_get.data;
+                // this.active_channel.channel_penable = 1'b0;
+                this.active_channel.cb_src.channel_pwrite <= 1'b1;
+                this.active_channel.cb_src.channel_psel <= 1'b1;
+                this.active_channel.cb_src.channel_paddr <= random_data_get.addr;
+                this.active_channel.cb_src.channel_pwdata <= random_data_get.data;
+                this.active_channel.cb_src.channel_penable <= 1'b0;
+            // APB access
+            @(posedge this.active_channel.clk)
+                // this.active_channel.channel_penable = 1'b1;
+                this.active_channel.cb_src.channel_penable <= 1'b1;
+                data[pushed_count] = random_data_get.data;
+                pushed_count = pushed_count + 1'b1;
+                $display("[SRC AGENT] Data pushed into FIFO: %h, total pushed: %d ", random_data_get.data, pushed_count);
+        endtask
+
+        // -------------------------------------------------------------------------
+        // [data_write_body: Body of the back-to-back APB write data handhsake
+        // -------------------------------------------------------------------------
+        task data_write_body(
+            ref bit [31:0] data [8192],
+            ref bit [12:0] pushed_count
+        );
+            // get data from mailbox to random_data_get
+            src_randomgen_datapkg random_data_get;
+            this.gen2drv.get(random_data_get);
+            // Wait for APB slave ready
+            // wait(this.active_channel.channel_pready)
+            wait(this.active_channel.cb_src.channel_pready == 1'b1)
+                // APB config
+                // @(negedge this.active_channel.channel_pready)
+                @(negedge this.active_channel.cb_src.channel_pready)
+                    // this.active_channel.channel_pwrite = 1'b1;
+                    // this.active_channel.channel_psel = 1'b1;
+                    // this.active_channel.channel_paddr = random_data_get.addr;
+                    // this.active_channel.channel_pwdata = random_data_get.data;
+                    // this.active_channel.channel_penable = 1'b0;
+                    this.active_channel.cb_src.channel_pwrite <= 1'b1;
+                    this.active_channel.cb_src.channel_psel <= 1'b1;
+                    this.active_channel.cb_src.channel_paddr <= random_data_get.addr;
+                    this.active_channel.cb_src.channel_pwdata <= random_data_get.data;
+                    this.active_channel.cb_src.channel_penable <= 1'b0;
+                // APB access
+                @(posedge this.active_channel.clk)
+                    // this.active_channel.channel_penable = 1'b1;
+                    this.active_channel.cb_src.channel_penable <= 1'b1;
+                    data[pushed_count] = random_data_get.data;
+                    pushed_count = pushed_count + 1'b1;
+                    $display("[SRC AGENT] Data pushed into FIFO: %h, total pushed: %d ", random_data_get.data, pushed_count);
+        endtask
+
+        // -------------------------------------------------------------------------
+        // [data_write_tail]: Tail of the back-to-back APB write data handhsake
+        // -------------------------------------------------------------------------
+        task data_write_tail(
+            ref bit [31:0] data [8192],
+            ref bit [12:0] pushed_count
+        );
+            // get data from mailbox to random_data_get
+            src_randomgen_datapkg random_data_get;
+            this.gen2drv.get(random_data_get);
+            // Wait for APB slave ready
+            // wait(this.active_channel.channel_pready)
+            wait(this.active_channel.cb_src.channel_pready == 1'b1)
+                // APB config
+                // @(negedge this.active_channel.channel_pready)
+                @(negedge this.active_channel.cb_src.channel_pready)
+                    // this.active_channel.channel_pwrite = 1'b1;
+                    // this.active_channel.channel_psel = 1'b1;
+                    // this.active_channel.channel_paddr = random_data_get.addr;
+                    // this.active_channel.channel_pwdata = random_data_get.data;
+                    // this.active_channel.channel_penable = 1'b0;
+                    this.active_channel.cb_src.channel_pwrite <= 1'b1;
+                    this.active_channel.cb_src.channel_psel <= 1'b1;
+                    this.active_channel.cb_src.channel_paddr <= random_data_get.addr;
+                    this.active_channel.cb_src.channel_pwdata <= random_data_get.data;
+                    this.active_channel.cb_src.channel_penable <= 1'b0;
+                // APB access
+                @(posedge this.active_channel.clk)
+                    // this.active_channel.channel_penable = 1'b1;
+                    this.active_channel.cb_src.channel_penable <= 1'b1;
+                    data[pushed_count] = random_data_get.data;
+                    pushed_count = pushed_count + 1'b1;
+                    $display("[SRC AGENT] Data pushed into FIFO: %h, total pushed: %d ", random_data_get.data, pushed_count);
                 // to APB idle
                 @(posedge this.active_channel.clk)
                     // this.active_channel.channel_pwrite = 1'b0;
@@ -269,6 +477,75 @@ package src_agent_main;
                 this.src_generator.data_gen(mode, random, addr, data);
                 // select and ask the driver to write the data
                 this.src_driver.data_write(this.data, this.pushed_count);
+            end
+        endtask
+
+        // -------------------------------------------------------------------------
+        // FUN : Head of a back-to-back data transimit
+        // -------------------------------------------------------------------------
+        task b2b_tran_head(
+            input mode,        // write or read
+            input random,      // random access flag
+            input [31:0] addr, // access addr
+            input [31:0] data  // access data
+         );
+            if (mode == 1'b0) begin // read mode
+                // generate data
+                this.src_generator.data_gen(mode, random, addr, data);
+                // select and ask the driver to read the data
+                this.src_driver.data_read_head();
+            end
+            else begin // write mode
+                // generate data
+                this.src_generator.data_gen(mode, random, addr, data);
+                // select and ask the driver to write the data
+                this.src_driver.data_write_head(this.data, this.pushed_count);
+            end
+        endtask
+
+        // -------------------------------------------------------------------------
+        // FUN : Body of a back-to-back data transimit
+        // -------------------------------------------------------------------------
+        task b2b_tran_body(
+            input mode,        // write or read
+            input random,      // random access flag
+            input [31:0] addr, // access addr
+            input [31:0] data  // access data
+         );
+            if (mode == 1'b0) begin // read mode
+                // generate data
+                this.src_generator.data_gen(mode, random, addr, data);
+                // select and ask the driver to read the data
+                this.src_driver.data_read_body();
+            end
+            else begin // write mode
+                // generate data
+                this.src_generator.data_gen(mode, random, addr, data);
+                // select and ask the driver to write the data
+                this.src_driver.data_write_body(this.data, this.pushed_count);
+            end
+        endtask
+
+        // -------------------------------------------------------------------------
+        // FUN : Tail of a back-to-back data transimit
+        // -------------------------------------------------------------------------
+        task b2b_tran_tail(
+            input mode,        // write or read
+            input random,      // random access flag
+            input [31:0] addr, // access addr
+            input [31:0] data  // access data
+         );
+            if (mode == 1'b0) begin // read mode
+                // generate data
+                this.src_generator.data_gen(mode, random, addr, data);
+                // select and ask the driver to read the data
+                this.src_driver.data_read_tail();
+            end
+            else begin // write mode
+                // generate data
+                this.src_generator.data_gen(mode, random, addr, data);
+                // select and ask the driver to write the data
+                this.src_driver.data_write_tail(this.data, this.pushed_count);
             end
         endtask
     endclass

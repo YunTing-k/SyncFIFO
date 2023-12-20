@@ -15,7 +15,7 @@
 // Description: 
 // Connect the DUT([$DUT Top].v) to testbench in interface.
 // Dependencies:
-// top_wrapper.v
+// top_wrapper.v, INTF.sv
 //
 // Revision:
 // ---------------------------------------------------------------------------------
