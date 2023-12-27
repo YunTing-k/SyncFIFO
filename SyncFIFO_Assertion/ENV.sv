@@ -275,6 +275,23 @@ package env;
                     end
                     $display("[ENV] finish work : Random APB/Arbiter Access!");
                 end
+                "FIFO Assertion Supplementary": begin
+                    // arbiter test, single channel read
+                    $display("[ENV] start work : Arbiter Read Single!");
+                    for (int i = 0;i < 1024;i++)begin // fill the fifo
+                        src_agent.single_tran(1, 0, `FIFO_WRITE_DATA, i + 1);
+                    end
+                    fork
+                        src_agent.single_tran(1, 0, `FIFO_WRITE_DATA, 1025);
+                        for (int i = 0;i < 1024;i++)begin // pop the fifo
+                            dst_agent.single_tran(0, 0, 0, i % 256, 0);
+                        end
+                    join
+                    // FIFO empty read test
+                    dst_agent.single_tran(0, 0, 0, 0, 0);
+                    dst_agent.single_tran(0, 0, 0, 0, 0);
+                    $display("[ENV] finish work : FIFO Assertion Supplementary!");
+                end
                 "Error Injection": begin
                     // Error injection test
                     $display("[ENV] start work : Error Injection!");

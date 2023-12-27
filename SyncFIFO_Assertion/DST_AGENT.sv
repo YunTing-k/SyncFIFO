@@ -143,9 +143,9 @@ package dst_agent_objects;
                 end
                 // to Arbiter idle
                 @(posedge this.active_channel.clk)
-                    // this.active_channel.addr_dst = 8'd0;
+                    // this.active_channel.addr_dst = 8'd0; // for low-power spec
                     // this.active_channel.priority_dst = 8'd0; // for low-power spec
-                    // this.active_channel.valid_dst = 1'b0; // for low-power spec
+                    // this.active_channel.valid_dst = 1'b0;
                     // this.active_channel.cb_dst.addr_dst <= 8'd0; // for low-power spec
                     // this.active_channel.cb_dst.priority_dst <= 8'd0; // for low-power spec
                     this.active_channel.cb_dst.valid_dst <= 1'b0;

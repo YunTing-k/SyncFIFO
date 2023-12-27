@@ -26,6 +26,7 @@
 // ---------------------------------------------------------------------------------
 // 2023/12/07     Yu Huang     1.0               APB assertion
 // 2023/12/19     Yu Huang     1.1               Read channel assertion
+// 2023/12/20     Yu Huang     1.2               FIFO assertion
 // ---------------------------------------------------------------------------------
 //
 //-FHDR//////////////////////////////////////////////////////////////////////////////
@@ -344,7 +345,7 @@ endmodule
 // [5]:  penable shouldn't be x after reset
 // [6]:  after psel rises, penable must rose in next cycle
 // [7]:  when pready dosen't rise, penable should be stable after it rises
-// [8]:  penable must fall in next cycle when ready is high
+// [8]:  penable must fall in next cycle when pready is high
 // [9]:  psel shouldn't be x after reset
 // [10]: psel must be stable until the pready rises
 // [11]: after psel set high, pwdata shouldn't be X

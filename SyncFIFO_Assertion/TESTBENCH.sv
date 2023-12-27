@@ -151,7 +151,8 @@ program testbench(
             // envctrl.run("Arbiter Read Simultaneous");
             // envctrl.run("Arbiter Read Race");
             // envctrl.run("Arbiter Random Access");
-            envctrl.run("Random APB/Arbiter Access");
+            // envctrl.run("Random APB/Arbiter Access");
+            envctrl.run("FIFO Assertion Supplementary");
             // envctrl.run("Error Injection");
             envctrl.run("Time Out");
         join_any
