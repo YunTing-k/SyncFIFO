@@ -63,7 +63,7 @@ module read_channel
     input  [ERRPTR - 1:0] wr_ptr_err_idx,  // write pointer error index, [addr = 3]
     input  [ADDR - 1:0] rd_ptr,            // read pointer,              [addr = 4]
     input  [ERRPTR - 1:0] rd_ptr_err_idx,  // read pointer error index,  [addr = 5]
-    output reg [8:0] priority,             // configured priority in reg
+    output reg [8:0] priority_dst,         // configured priority in reg
     output reg [31:0] data,                // readout data
     output reg block,                      // block signal for arbiter
     output reg rd_en,                      // read enable signal
@@ -139,7 +139,7 @@ end
 always @(posedge clk or negedge rst_n) begin
     if (rst_n == 1'b0) begin
         // output reg reset
-        priority <= 9'd0;
+        priority_dst <= 9'd0;
         data <= 32'd0;
         block <= 1'b0;
         rd_en <= 1'b0;
@@ -159,7 +159,7 @@ always @(posedge clk or negedge rst_n) begin
         IDLE:
         begin
             // output reg reset
-            priority <= 9'd0;
+            priority_dst <= 9'd0;
             block <= 1'b0;
             rd_en <= 1'b0;
             rd_only <= 1'b0;
@@ -175,13 +175,13 @@ always @(posedge clk or negedge rst_n) begin
         begin
             if (busy == 1'b0) begin // if not busy, we can config priority and take control
                 // configured pri = input pri + 1
-                priority <= {1'b0, priority_cfg} + 1'b1;
+                priority_dst <= {1'b0, priority_cfg} + 1'b1;
                 addr <= addr_cfg;
                 cfg_done <= 1'b1;
                 block <= 1'b1; // since priority is configured, the arbiter is blocked by this channel
             end
             else begin // if busy, we can not config priority, since this race may occur
-                priority <= 9'd0;
+                priority_dst <= 9'd0;
                 addr <= 8'd0;
                 cfg_done <= 1'b0;
                 block <= 1'b0; // the arbiter is blocked by another channel
@@ -209,11 +209,11 @@ always @(posedge clk or negedge rst_n) begin
         WAITDATA: // wait for data ready from ctr -> fifo -> reg
         begin
             ctrl_done <= 1'b0;
-            block <= 1'b0;    // clear block signal to give back the control
-                              // only the control signal is outputted, can we unblock the arbiter
-            priority <= 9'd0; // clear priority to give back the control
-            rd_en <= 1'b0;    // avoid redundant request
-            rd_only <= 1'b0;  // avoid redundant request
+            block <= 1'b0;        // clear block signal to give back the control
+                                  // only the control signal is outputted, can we unblock the arbiter
+            priority_dst <= 9'd0; // clear priority to give back the control
+            rd_en <= 1'b0;        // avoid redundant request
+            rd_only <= 1'b0;      // avoid redundant request
             if (wait_counter < (3'd2 - 3'd1)) begin
                 wait_done <= 1'b0;
                 wait_counter <= wait_counter + 1'b1;
@@ -242,7 +242,7 @@ always @(posedge clk or negedge rst_n) begin
         default:
         begin
             // output reg reset
-            priority <= 9'd0;
+            priority_dst <= 9'd0;
             block <= 1'b0;
             rd_en <= 1'b0;
             rd_only <= 1'b0;

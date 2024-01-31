@@ -322,7 +322,7 @@ chdata_satble_until_next_req: assert property (_data_stable_until_next_req) else
     property _ready_fall_with_valid;
         // ready must fall with valid (disable when reset)
         @(posedge clk) disable iff(~rst_n)
-            $fell(ready) |-> $fell(valid)
+            $fell(ready) |-> $fell(valid);
     endproperty
 
     property _ready_instant_fall;
@@ -503,7 +503,7 @@ prdata_stable_until_next_trans: assert property(_prdata_stable_until_next_trans)
     property _pready_fall_with_penable;
         // pready must fall with penable (disable when reset)
         @(posedge clk) disable iff(~rst_n)
-            $fell(pready) |-> $fell(penable)
+            $fell(pready) |-> $fell(penable);
     endproperty
 
     property _pready_instant_fall;

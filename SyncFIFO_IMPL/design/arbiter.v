@@ -116,7 +116,7 @@ channel0(
     .wr_ptr_err_idx  (wr_ptr_err_idx),    // write pointer error index, [addr = 3]
     .rd_ptr          (rd_ptr),            // read pointer,              [addr = 4]
     .rd_ptr_err_idx  (rd_ptr_err_idx),    // read pointer error index,  [addr = 5]
-    .priority        (priority0),         // [configured priority in reg]
+    .priority_dst    (priority0),         // [configured priority in reg]
     .data            (data_dst0),         // [readout data]
     .block           (block_dst0),        // block signal for arbiter
     .rd_en           (rd_en0),            // [read enable signal]
@@ -139,7 +139,7 @@ channel1(
     .wr_ptr_err_idx  (wr_ptr_err_idx),    // write pointer error index, [addr = 3]
     .rd_ptr          (rd_ptr),            // read pointer,              [addr = 4]
     .rd_ptr_err_idx  (rd_ptr_err_idx),    // read pointer error index,  [addr = 5]
-    .priority        (priority1),         // [configured priority in reg]
+    .priority_dst    (priority1),         // [configured priority in reg]
     .data            (data_dst1),         // [readout data]
     .block           (block_dst1),        // block signal for arbiter
     .rd_en           (rd_en1),            // [read enable signal]
@@ -162,7 +162,7 @@ channel2(
     .wr_ptr_err_idx  (wr_ptr_err_idx),    // write pointer error index, [addr = 3]
     .rd_ptr          (rd_ptr),            // read pointer,              [addr = 4]
     .rd_ptr_err_idx  (rd_ptr_err_idx),    // read pointer error index,  [addr = 5]
-    .priority        (priority2),         // [configured priority in reg]
+    .priority_dst    (priority2),         // [configured priority in reg]
     .data            (data_dst2),         // [readout data]
     .block           (block_dst2),        // block signal for arbiter
     .rd_en           (rd_en2),            // [read enable signal]
@@ -185,7 +185,7 @@ channel3(
     .wr_ptr_err_idx  (wr_ptr_err_idx),    // write pointer error index, [addr = 3]
     .rd_ptr          (rd_ptr),            // read pointer,              [addr = 4]
     .rd_ptr_err_idx  (rd_ptr_err_idx),    // read pointer error index,  [addr = 5]
-    .priority        (priority3),         // [configured priority in reg]
+    .priority_dst    (priority3),         // [configured priority in reg]
     .data            (data_dst3),         // [readout data]
     .block           (block_dst3),        // block signal for arbiter
     .rd_en           (rd_en3),            // [read enable signal]
@@ -208,7 +208,7 @@ channel4(
     .wr_ptr_err_idx  (wr_ptr_err_idx),    // write pointer error index, [addr = 3]
     .rd_ptr          (rd_ptr),            // read pointer,              [addr = 4]
     .rd_ptr_err_idx  (rd_ptr_err_idx),    // read pointer error index,  [addr = 5]
-    .priority        (priority4),         // [configured priority in reg]
+    .priority_dst    (priority4),         // [configured priority in reg]
     .data            (data_dst4),         // [readout data]
     .block           (block_dst4),        // block signal for arbiter
     .rd_en           (rd_en4),            // [read enable signal]
@@ -231,7 +231,7 @@ channel5(
     .wr_ptr_err_idx  (wr_ptr_err_idx),    // write pointer error index, [addr = 3]
     .rd_ptr          (rd_ptr),            // read pointer,              [addr = 4]
     .rd_ptr_err_idx  (rd_ptr_err_idx),    // read pointer error index,  [addr = 5]
-    .priority        (priority5),         // [configured priority in reg]
+    .priority_dst    (priority5),         // [configured priority in reg]
     .data            (data_dst5),         // [readout data]
     .block           (block_dst5),        // block signal for arbiter
     .rd_en           (rd_en5),            // [read enable signal]
@@ -254,7 +254,7 @@ channel6(
     .wr_ptr_err_idx  (wr_ptr_err_idx),    // write pointer error index, [addr = 3]
     .rd_ptr          (rd_ptr),            // read pointer,              [addr = 4]
     .rd_ptr_err_idx  (rd_ptr_err_idx),    // read pointer error index,  [addr = 5]
-    .priority        (priority6),         // [configured priority in reg]
+    .priority_dst    (priority6),         // [configured priority in reg]
     .data            (data_dst6),         // [readout data]
     .block           (block_dst6),        // block signal for arbiter
     .rd_en           (rd_en6),            // [read enable signal]
@@ -277,7 +277,7 @@ channel7(
     .wr_ptr_err_idx  (wr_ptr_err_idx),    // write pointer error index, [addr = 3]
     .rd_ptr          (rd_ptr),            // read pointer,              [addr = 4]
     .rd_ptr_err_idx  (rd_ptr_err_idx),    // read pointer error index,  [addr = 5]
-    .priority        (priority7),         // [configured priority in reg]
+    .priority_dst    (priority7),         // [configured priority in reg]
     .data            (data_dst7),         // [readout data]
     .block           (block_dst7),        // block signal for arbiter
     .rd_en           (rd_en7),            // [read enable signal]
